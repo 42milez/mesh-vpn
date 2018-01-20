@@ -2,10 +2,10 @@
 A decentralized VPN, inspired by [meshbird](https://github.com/meshbird/meshbird).
 
 # Features
-- DHT
+- DHT peer discovery
 - Port forwarding (NAT-PMP, UPnP, STUN)
 - Encryption (AES-256)
-- IPv4/IPv6
+- IPv6
 
 # Road map
 

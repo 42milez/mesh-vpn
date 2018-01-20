@@ -8,15 +8,12 @@ set(
 
 set(build_cmd make -j2)
 
-#set(install_cmd make install)
-
 ExternalProject_Add(libtorrent
   GIT_REPOSITORY    https://github.com/arvidn/libtorrent.git
   GIT_TAG           libtorrent-1_1_5
   BUILD_IN_SOURCE   1
   CONFIGURE_COMMAND ${configure_cmd}
   BUILD_COMMAND     ${build_cmd}
-#  INSTALL_COMMAND   ${install_cmd}
 )
 
 add_dependencies(libtorrent openssl boost)

@@ -2,20 +2,10 @@
 #include <iostream>
 #include <thread>
 
-#include "libtorrent/natpmp.hpp"
-#include "libtorrent/socket.hpp"
-#include "libtorrent/socket_io.hpp"
-
-#include "boost/bind.hpp"
-#include <boost/ref.hpp>
-#include <boost/intrusive_ptr.hpp>
-
 #include "BuildInfo.h"
 #include "mvcrypt/NetworkSecret.h"
 #include "mvcore/Common.h"
 #include "mvcore/AdminUtils.h"
-
-namespace lt = libtorrent;
 
 void help() {
   std::cout << "Usage vpn [OPTIONS]" << std::endl
@@ -87,59 +77,11 @@ int main(int argc, char **argv) {
         std::cout << "cli: " << ipnet2.netmask << std::endl;
       }
     } else if (arg == "-p" || arg == "--ping") {
-      //  Perform a DHT ping to another node
-      // --------------------------------------------------
-      //      lt::dht_settings settings;
-      //      settings.max_torrents    = 4;
-      //      settings.max_dht_items   = 4;
-      //      settings.enforce_node_id = false;
+      // Perform a DHT ping to another node
+      // ...
     } else if (arg == "-j" || arg == "--join") {
-      lt::io_service ios;
-      std::string user_agent = "test agent";
-
-      lt::portmap_callback_t callback = [](int mapping, lt::address extip, int port, int dummy, lt::error_code const& err) {
-        std::cerr << "mapping: " << mapping
-                  << ", port: " << port
-                  << ", external-IP: " << lt::print_address(extip)
-                  << ", error: \"" << err.message() << "\"\n";
-      };
-
-      lt::log_callback_t log_callback= [](char const* line) {
-        std::cerr << line << std::endl;
-      };
-
-      auto natpmp_handler = new lt::natpmp(ios, callback, log_callback);
-
-      lt::deadline_timer timer(ios);
-
-      auto tcp_port = 54321;
-      auto udp_port = 54322;
-
-      auto tcp_map = natpmp_handler->add_mapping(lt::natpmp::tcp, tcp_port, tcp_port);
-      auto udp_map = natpmp_handler->add_mapping(lt::natpmp::tcp, udp_port, udp_port);
-
-      lt::error_code ec;
-
-      timer.expires_from_now(lt::seconds(2), ec);
-      timer.async_wait(boost::bind(&lt::io_service::stop, boost::ref(ios)));
-
-      std::cerr << "mapping ports TCP: " << tcp_port << " UDP: " << udp_port << std::endl;
-
-      ios.reset();
-      ios.run(ec);
-      timer.expires_from_now(lt::seconds(2), ec);
-      timer.async_wait(boost::bind(&lt::io_service::stop, boost::ref(ios)));
-      std::cerr << "removing mapping " << tcp_map << std::endl;
-      natpmp_handler->delete_mapping(tcp_map);
-
-      ios.reset();
-      ios.run(ec);
-      std::cerr << "removing mappings" << std::endl;
-      natpmp_handler->close();
-
-      ios.reset();
-      ios.run(ec);
-      std::cerr << "closing" << std::endl;
+      // join a network
+      // ...
     } else if (arg == "-l" || arg == "--list") {
       // list peers
       // ...

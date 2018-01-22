@@ -6,19 +6,10 @@
 
 #include "libtorrent/config.hpp"
 #include "libtorrent/session.hpp"
-#include "libtorrent/kademlia/node.hpp" // for verify_message
+#include "libtorrent/kademlia/node.hpp"
 #include "libtorrent/bencode.hpp"
-#include "libtorrent/socket_io.hpp" // for hash_address
-#include "libtorrent/broadcast_socket.hpp" // for supports_ipv6
-#include "libtorrent/performance_counters.hpp" // for counters
-#include "libtorrent/random.hpp"
-#include "libtorrent/ed25519.hpp"
-
-#include "libtorrent/kademlia/node_id.hpp"
-#include "libtorrent/kademlia/routing_table.hpp"
-#include "libtorrent/kademlia/item.hpp"
+#include "libtorrent/socket_io.hpp"
 #include "libtorrent/kademlia/dht_observer.hpp"
-#include "libtorrent/ed25519.hpp"
 
 #include "BuildInfo.h"
 #include "mvcrypt/NetworkSecret.h"
@@ -55,6 +46,8 @@ private:
 // static変数の初期化？
 bool ExitHandler::s_shouldExit = false;
 
+// --------------------------------------------------
+//  begin ping demo
 // --------------------------------------------------
 
 std::list<std::pair<lt::udp::endpoint, lt::entry> > g_sent_packets;
@@ -198,7 +191,7 @@ struct msg_args {
   }
 
   msg_args &want(std::string w) {
-    a["want"].list().push_back(w);
+    a["want"].list().emplace_back(w);
     return *this;
   }
 
@@ -264,94 +257,103 @@ void send_dht_request(lt::dht::node &node, char const *msg, lt::udp::endpoint co
   }
 }
 
-// --------------------------------------------------
+// [ end ping demo ] ----------
 
 int main(int argc, char **argv) {
 
   //  Parse arguments
   // --------------------------------------------------
-  for (int i = 1; i < argc; ++i) {
-    std::string arg = argv[i];
+  std::string arg = argv[1];
+
+  if (false) {
+    // do nothing
+  } else if (arg == "-h" || arg == "--help") {
+    help();
+  } else if (arg == "-v" || arg == "--version") {
+    version();
+  } else if (arg == "-n" || arg == "--new") {
     if (false) {
-      // do nothing
-    } else if (arg == "-h" || arg == "--help") {
-      help();
-    } else if (arg == "-v" || arg == "--version") {
-      version();
-    } else if (arg == "-n" || arg == "--new") {
-      if (false) {
-        // キーが引数に与えられている場合（既存のキーからシークレットを復元する操作）
-        //  - キーは16進数となるため、16進数とbyte型の相互変換を行う仕組みが必要
-        //  - 複数引数を扱う必要がある
-        // ...
-      } else {
-        std::cout << "sizeof(char): " << sizeof(char) << std::endl;
-        std::cout << "--------------------------------------------------" << std::endl;
-
-        auto ns = mvcrypt::NetworkSecret{ "10.7.0.0/24" };
-        std::string key;
-        network::IpNet ipnet;
-        std::tie(key, ipnet) = ns.secret();
-        std::cout << key << std::endl;
-        std::cout << ipnet.ip4.to_string() << std::endl;
-        std::cout << ipnet.netmask << std::endl;
-        auto marshaled = ns.marshal();
-        std::cout << marshaled << std::endl;
-        std::cout << "--------------------------------------------------" << std::endl;
-
-        auto ns2 = mvcrypt::NetworkSecret::unmarshal(marshaled);
-        std::string key2;
-        network::IpNet ipnet2;
-        std::tie(key2, ipnet2) = ns2->secret();
-        std::cout << "cli: " << key2 << std::endl;
-        std::cout << "cli: " << ipnet2.ip4.to_string() << std::endl;
-        std::cout << "cli: " << ipnet2.netmask << std::endl;
-      }
-    } else if (arg == "-p" || arg == "--ping") {
-      // Perform a DHT ping to another node
-      // ...
-    } else if (arg == "-j" || arg == "--join") {
-      lt::dht_settings settings;
-      settings.max_torrents = 4;
-      settings.max_dht_items = 4;
-      settings.enforce_node_id = false;
-      mock_socket s;
-      obs observer;
-      lt::counters cnt;
-      lt::dht::node node(&s, settings, lt::dht::node_id(0), &observer, cnt);
-
-      lt::bdecode_node response;
-      char error_string[200];
-      bool ret;
-
-      // ===== [ ping ] =====
-
-      lt::udp::endpoint source(lt::address::from_string("10.0.0.1"), 20);
-      send_dht_request(node, "ping", source, &response);
-
-      lt::dht::key_desc_t pong_desc[] = {
-        { "y",  lt::bdecode_node::string_t, 1,  0 },
-        { "t",  lt::bdecode_node::string_t, 2,  0 },
-        { "r",  lt::bdecode_node::dict_t,   0,  lt::dht::key_desc_t::parse_children },
-        { "id", lt::bdecode_node::string_t, 20, lt::dht::key_desc_t::last_child },
-      };
-
-      lt::bdecode_node pong_keys[4];
-
-      fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
-      ret = lt::dht::verify_message(response, pong_desc, pong_keys, error_string, sizeof(error_string));
-      if (ret) {
-        std::cout << "valid ping response" << std::endl;
-      } else {
-        fprintf(stdout, "invalid ping response: %s\n", error_string);
-      }
-    } else if (arg == "-l" || arg == "--list") {
-      // list peers
+      // キーが引数に与えられている場合（既存のキーからシークレットを復元する操作）
+      //  - キーは16進数となるため、16進数とbyte型の相互変換を行う仕組みが必要
+      //  - 複数引数を扱う必要がある
       // ...
     } else {
-      std::cerr << "Invalid argument: " << arg << std::endl;
-      exit(-1);
+      std::cout << "sizeof(char): " << sizeof(char) << std::endl;
+      std::cout << "--------------------------------------------------" << std::endl;
+
+      auto ns = mvcrypt::NetworkSecret{ "10.7.0.0/24" };
+      std::string key;
+      network::IpNet ipnet;
+      std::tie(key, ipnet) = ns.secret();
+      std::cout << key << std::endl;
+      std::cout << ipnet.ip4.to_string() << std::endl;
+      std::cout << ipnet.netmask << std::endl;
+      auto marshaled = ns.marshal();
+      std::cout << marshaled << std::endl;
+      std::cout << "--------------------------------------------------" << std::endl;
+
+      auto ns2 = mvcrypt::NetworkSecret::unmarshal(marshaled);
+      std::string key2;
+      network::IpNet ipnet2;
+      std::tie(key2, ipnet2) = ns2->secret();
+      std::cout << "cli: " << key2 << std::endl;
+      std::cout << "cli: " << ipnet2.ip4.to_string() << std::endl;
+      std::cout << "cli: " << ipnet2.netmask << std::endl;
     }
+  } else if (arg == "-p" || arg == "--ping") {
+
+    //  Perform a DHT ping to another node
+    // --------------------------------------------------
+
+    lt::dht_settings sett;
+    sett.max_torrents = 4;
+    sett.max_dht_items = 4;
+    sett.enforce_node_id = false;
+    mock_socket s;
+    obs observer;
+    lt::counters cnt;
+    lt::dht::node node(&s, sett, lt::dht::node_id(0), &observer, cnt);
+
+    lt::bdecode_node response;
+    char error_string[200];
+    bool ret;
+
+    lt::udp::endpoint source(lt::address::from_string("10.0.0.1"), 20);
+    send_dht_request(node, "ping", source, &response);
+
+    lt::dht::key_desc_t pong_desc[] = {
+      { "y",  lt::bdecode_node::string_t, 1,  0 },
+      { "t",  lt::bdecode_node::string_t, 2,  0 },
+      { "r",  lt::bdecode_node::dict_t,   0,  lt::dht::key_desc_t::parse_children },
+      { "id", lt::bdecode_node::string_t, 20, lt::dht::key_desc_t::last_child },
+    };
+
+    lt::bdecode_node pong_keys[4];
+
+    fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+    ret = lt::dht::verify_message(response, pong_desc, pong_keys, error_string, sizeof(error_string));
+    // TEST_CHECK(ret);
+    if (ret) {
+      std::cout << "pong_keys[0].string_value(): " << pong_keys[0].string_value() << std::endl; // r
+      std::cout << "pong_keys[1].string_value(): " << pong_keys[1].string_value() << std::endl; // 10
+    } else {
+      fprintf(stdout, "   invalid ping response: %s\n", error_string);
+    }
+  } else if (arg == "-j" || arg == "--join") {
+
+    //  Join a network
+    // --------------------------------------------------
+    // ...
+
+  } else if (arg == "-l" || arg == "--list") {
+
+    //  List peers
+    // --------------------------------------------------
+    // ...
+
+  } else {
+    std::cerr << "Invalid argument: " << arg << std::endl;
+    exit(-1);
   }
 
   //  Handle signals

@@ -27,12 +27,12 @@ include(ExternalProject)
 
 #  OpenSSL
 # --------------------------------------------------
-include(${PROJECT_SOURCE_DIR}/vendor/openssl/openssl.cmake)
+include(cmake/modules/openssl.cmake)
 
 #  Boost
 # --------------------------------------------------
-include(${PROJECT_SOURCE_DIR}/vendor/boost/boost.cmake)
+include(cmake/modules/boost.cmake)
 
 #  libtorrent
 # --------------------------------------------------
-include(${PROJECT_SOURCE_DIR}/vendor/libtorrent/libtorrent.cmake)
+include(cmake/modules/libtorrent.cmake)

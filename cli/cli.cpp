@@ -305,20 +305,20 @@ int main(int argc, char **argv) {
     //  Perform a DHT ping to another node
     // --------------------------------------------------
 
+    mock_socket s; // mock
+    obs observer;  // mock
+
+    lt::bdecode_node response;
+    lt::counters cnt;
     lt::dht_settings sett;
+
     sett.max_torrents = 4;
     sett.max_dht_items = 4;
     sett.enforce_node_id = false;
-    mock_socket s;
-    obs observer;
-    lt::counters cnt;
+
     lt::dht::node node(&s, sett, lt::dht::node_id(0), &observer, cnt);
-
-    lt::bdecode_node response;
-    char error_string[200];
-    bool ret;
-
     lt::udp::endpoint source(lt::address::from_string("10.0.0.1"), 20);
+
     send_dht_request(node, "ping", source, &response);
 
     lt::dht::key_desc_t pong_desc[] = {
@@ -328,9 +328,12 @@ int main(int argc, char **argv) {
       { "id", lt::bdecode_node::string_t, 20, lt::dht::key_desc_t::last_child },
     };
 
-    lt::bdecode_node pong_keys[4];
-
     fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+
+    lt::bdecode_node pong_keys[4];
+    char error_string[200];
+    bool ret;
+
     ret = lt::dht::verify_message(response, pong_desc, pong_keys, error_string, sizeof(error_string));
     // TEST_CHECK(ret);
     if (ret) {

@@ -1,18 +1,15 @@
 include(CMakePackageConfigHelpers)
 
-set(libtorrent_DIR ${CMAKE_BINARY_DIR})
-
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/libtorrent-rasterbar/libtorrent-rasterbarConfigVersion.cmake"
   VERSION 1.1.5
   COMPATIBILITY ExactVersion
 )
 
-set(ConfigPackageLocation lib/cmake/libtorrent-rasterbar)
+set(ConfigPackageLocation ${CMAKE_BINARY_DIR}/libtorrent-rasterbar)
 
 install(
   FILES
-    libtorrent-rasterbarConfig.cmake
     "${CMAKE_CURRENT_BINARY_DIR}/libtorrent-rasterbar/libtorrent-rasterbarConfigVersion.cmake"
   DESTINATION
     ${ConfigPackageLocation}

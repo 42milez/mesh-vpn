@@ -43,11 +43,8 @@ void version() {
 class ExitHandler : public dev::rpc::SystemManager {
 public:
   void exit() { exitHandler(0); }
-
   static void exitHandler(int) { s_shouldExit = true; }
-
   bool shouldExit() const { return s_shouldExit; }
-
 private:
   static bool s_shouldExit;
 };
@@ -61,7 +58,6 @@ std::list<std::pair<lt::udp::endpoint, lt::entry> > g_sent_packets;
 
 struct mock_socket : lt::dht::udp_socket_interface {
   bool has_quota() TORRENT_OVERRIDE { return true; }
-
   bool send_packet(lt::entry &msg, lt::udp::endpoint const &ep, int flags) TORRENT_OVERRIDE {
     // TODO: ideally the mock_socket would contain this queue of packets, to
     // make tests independent

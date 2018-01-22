@@ -2,6 +2,8 @@ set(SOURCE_FILES cli.cpp)
 
 add_executable(cli ${SOURCE_FILES})
 
+add_dependencies(cli libtorrent)
+
 set(openssl_libs
   ${CMAKE_BINARY_DIR}/lib/libcrypto.a
   ${CMAKE_BINARY_DIR}/lib/libssl.a

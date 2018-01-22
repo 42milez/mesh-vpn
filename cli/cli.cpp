@@ -43,8 +43,11 @@ void version() {
 class ExitHandler : public dev::rpc::SystemManager {
 public:
   void exit() { exitHandler(0); }
+
   static void exitHandler(int) { s_shouldExit = true; }
+
   bool shouldExit() const { return s_shouldExit; }
+
 private:
   static bool s_shouldExit;
 };
@@ -58,6 +61,7 @@ std::list<std::pair<lt::udp::endpoint, lt::entry> > g_sent_packets;
 
 struct mock_socket : lt::dht::udp_socket_interface {
   bool has_quota() TORRENT_OVERRIDE { return true; }
+
   bool send_packet(lt::entry &msg, lt::udp::endpoint const &ep, int flags) TORRENT_OVERRIDE {
     // TODO: ideally the mock_socket would contain this queue of packets, to
     // make tests independent
@@ -91,8 +95,8 @@ struct obs : lt::dht::dht_observer {
 
   void log_packet(message_direction_t dir, char const *pkt, int len, lt::udp::endpoint node) TORRENT_OVERRIDE {}
 
-  bool
-  on_dht_request(char const *query, int query_len, lt::dht::msg const &request, lt::entry &response) TORRENT_OVERRIDE {
+  bool on_dht_request(char const *query, int query_len, lt::dht::msg const &request,
+                      lt::entry &response) TORRENT_OVERRIDE {
     return false;
   }
 
@@ -284,7 +288,7 @@ int main(int argc, char **argv) {
         std::cout << "sizeof(char): " << sizeof(char) << std::endl;
         std::cout << "--------------------------------------------------" << std::endl;
 
-        auto ns = mvcrypt::NetworkSecret{"10.7.0.0/24"};
+        auto ns = mvcrypt::NetworkSecret{ "10.7.0.0/24" };
         std::string key;
         network::IpNet ipnet;
         std::tie(key, ipnet) = ns.secret();
@@ -326,10 +330,10 @@ int main(int argc, char **argv) {
       send_dht_request(node, "ping", source, &response);
 
       lt::dht::key_desc_t pong_desc[] = {
-        {"y",  lt::bdecode_node::string_t, 1,  0},
-        {"t",  lt::bdecode_node::string_t, 2,  0},
-        {"r",  lt::bdecode_node::dict_t,   0,  lt::dht::key_desc_t::parse_children},
-        {"id", lt::bdecode_node::string_t, 20, lt::dht::key_desc_t::last_child},
+        { "y",  lt::bdecode_node::string_t, 1,  0 },
+        { "t",  lt::bdecode_node::string_t, 2,  0 },
+        { "r",  lt::bdecode_node::dict_t,   0,  lt::dht::key_desc_t::parse_children },
+        { "id", lt::bdecode_node::string_t, 20, lt::dht::key_desc_t::last_child },
       };
 
       lt::bdecode_node pong_keys[4];

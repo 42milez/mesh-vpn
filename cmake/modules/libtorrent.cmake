@@ -1,8 +1,11 @@
+set(LIBTORRENT_VERSION 1.1.5)
+set(LIBTORRENT_GIT_TAG libtorrent-1_1_5)
+
 include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/libtorrent-rasterbar/libtorrent-rasterbarConfigVersion.cmake"
-  VERSION 1.1.5
+  VERSION ${LIBTORRENT_VERSION}
   COMPATIBILITY ExactVersion
 )
 
@@ -27,7 +30,7 @@ set(install_cmd make install)
 
 ExternalProject_Add(libtorrent
   GIT_REPOSITORY    https://github.com/arvidn/libtorrent.git
-  GIT_TAG           libtorrent-1_1_5
+  GIT_TAG           ${LIBTORRENT_GIT_TAG}
   BUILD_IN_SOURCE   1
   CONFIGURE_COMMAND ${configure_cmd}
   BUILD_COMMAND     ${build_cmd}

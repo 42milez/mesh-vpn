@@ -1,5 +1,7 @@
 # https://stackoverflow.com/questions/42835837/how-to-clone-specific-submodules-from-boost-using-cmake
 
+set(BOOST_GIT_TAG boost-1.65.1)
+
 set(BOOST_ROOT ${CMAKE_BINARY_DIR})
 
 find_package(Boost)
@@ -16,7 +18,7 @@ if (NOT Boost_FOUND)
 
   ExternalProject_Add(boost
     GIT_REPOSITORY    https://github.com/boostorg/boost.git
-    GIT_TAG           boost-1.65.1
+    GIT_TAG           ${BOOST_GIT_TAG}
     BUILD_IN_SOURCE   1
     CONFIGURE_COMMAND ${configure_cmd}
     BUILD_COMMAND     ${build_cmd}

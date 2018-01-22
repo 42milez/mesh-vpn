@@ -1,3 +1,5 @@
+set(OPENSSL_GIT_TAG OpenSSL_1_1_0g)
+
 set(OPENSSL_ROOT_DIR ${CMAKE_BINARY_DIR})
 
 find_package(OpenSSL)
@@ -14,7 +16,7 @@ if (NOT OPENSSL_FOUND)
 
   ExternalProject_Add(openssl
     GIT_REPOSITORY    https://github.com/openssl/openssl.git
-    GIT_TAG           OpenSSL_1_1_0g
+    GIT_TAG           ${OPENSSL_GIT_TAG}
     BUILD_IN_SOURCE   1
     CONFIGURE_COMMAND ${configure_cmd}
     BUILD_COMMAND     ${build_cmd}

@@ -1,5 +1,4 @@
 set(OPENSSL_GIT_TAG OpenSSL_1_1_0g)
-
 set(OPENSSL_ROOT_DIR ${CMAKE_BINARY_DIR})
 
 find_package(OpenSSL)
@@ -9,9 +8,7 @@ if (NOT OPENSSL_FOUND)
   set(configure_cmd ./config --prefix=${CMAKE_BINARY_DIR}
                              --openssldir=${CMAKE_BINARY_DIR}/include/openssl
                              --libdir=lib)
-
   set(build_cmd make -j2)
-
   set(install_cmd make install)
 
   ExternalProject_Add(openssl

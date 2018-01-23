@@ -1,7 +1,6 @@
 # https://stackoverflow.com/questions/42835837/how-to-clone-specific-submodules-from-boost-using-cmake
 
 set(BOOST_GIT_TAG boost-1.65.1)
-
 set(BOOST_ROOT ${CMAKE_BINARY_DIR})
 
 find_package(Boost)
@@ -11,9 +10,7 @@ if (NOT Boost_FOUND)
   set(configure_cmd ./bootstrap.sh --prefix=${CMAKE_BINARY_DIR}
                                    --includedir=${CMAKE_BINARY_DIR}/include
                                    --libdir=${CMAKE_BINARY_DIR}/lib)
-
   set(build_cmd ./b2 headers)
-
   set(install_cmd ./b2 -j2 install)
 
   ExternalProject_Add(boost

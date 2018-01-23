@@ -50,7 +50,7 @@ bool ExitHandler::s_shouldExit = false;
 //  begin ping demo
 // --------------------------------------------------
 
-std::list<std::pair<lt::udp::endpoint, lt::entry> > g_sent_packets;
+std::list<std::pair<lt::udp::endpoint, lt::entry>> g_sent_packets;
 
 struct mock_socket : lt::dht::udp_socket_interface {
   bool has_quota() TORRENT_OVERRIDE { return true; }
@@ -98,11 +98,11 @@ struct obs : lt::dht::dht_observer {
 
 lt::sha1_hash generate_next() {
   lt::sha1_hash ret;
-  for (int i = 0; i < 20; ++i) ret[i] = rand() & 0xff;
+  for (int i = 0; i < 20; ++i) ret[i] = static_cast<uint8_t>(rand() & 0xff);
   return ret;
 }
 
-std::list<std::pair<lt::udp::endpoint, lt::entry> >::iterator
+std::list<std::pair<lt::udp::endpoint, lt::entry>>::iterator
 find_packet(lt::udp::endpoint ep) {
   return std::find_if(g_sent_packets.begin(), g_sent_packets.end(), boost::bind(&std::pair<lt::udp::endpoint,
     lt::entry>::first, _1) == ep);
@@ -239,7 +239,7 @@ void send_dht_request(lt::dht::node &node, char const *msg, lt::udp::endpoint co
 
   // If the request is supposed to get a response, by now the node should have
   // invoked the send function and put the response in g_sent_packets
-  std::list<std::pair<lt::udp::endpoint, lt::entry> >::iterator i = find_packet(ep);
+  auto i = find_packet(ep);
   if (has_response) {
     if (i == g_sent_packets.end()) {
       return;
@@ -302,8 +302,11 @@ int main(int argc, char **argv) {
     }
   } else if (arg == "-p" || arg == "--ping") {
 
-    //  Perform a DHT ping to another node
+    //  Perform a DHT ping to a node
     // --------------------------------------------------
+
+    // parse a node IP address
+    // ...
 
     mock_socket s; // mock
     obs observer;  // mock
@@ -335,7 +338,7 @@ int main(int argc, char **argv) {
     bool ret;
 
     ret = lt::dht::verify_message(response, pong_desc, pong_keys, error_string, sizeof(error_string));
-    // TEST_CHECK(ret);
+
     if (ret) {
       std::cout << "pong_keys[0].string_value(): " << pong_keys[0].string_value() << std::endl; // r
       std::cout << "pong_keys[1].string_value(): " << pong_keys[1].string_value() << std::endl; // 10

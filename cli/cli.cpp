@@ -59,15 +59,27 @@ std::vector<lt::dht_routing_bucket> dht_routing_table;
 
 bool handle_alert(torrent_view &view, session_view &ses_view, lt::session &ses, lt::alert *a) {
   if (lt::session_stats_alert * s = lt::alert_cast<lt::session_stats_alert>(a)) {
-    ses_view.update_counters(s->values,
-                             sizeof(s->values) / sizeof(s->values[0]),
-                             lt::duration_cast<lt::microseconds>(s->timestamp().time_since_epoch()).count());
-    return true;
+//    ses_view.update_counters(s->values,
+//                             sizeof(s->values) / sizeof(s->values[0]),
+//                             lt::duration_cast<lt::microseconds>(s->timestamp().time_since_epoch()).count());
+//    return true;
   }
 
   if (lt::dht_stats_alert * p = lt::alert_cast<lt::dht_stats_alert>(a)) {
     dht_active_requests = p->active_requests;
     dht_routing_table = p->routing_table;
+    return true;
+  }
+
+  // https://github.com/arvidn/libtorrent/issues/602
+  if (lt::dht_get_peers_reply_alert * p = lt::alert_cast<lt::dht_get_peers_reply_alert>(a)) {
+    auto peers = p->peers();
+
+    for (auto peer : peers) {
+      std::cout << peer.address() << std::endl;
+    }
+    std::cout << "--------------------------------------------------" << std::endl;
+
     return true;
   }
 
@@ -137,6 +149,7 @@ int main(int argc, char **argv) {
     settings.set_int(lt::settings_pack::cache_size, cache_size);
     settings.set_int(lt::settings_pack::active_loaded_limit, active_loaded_limit);
     settings.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
+//    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "tracker.kali.org:6969");
 
     // --------------------------------------------------
 
@@ -152,6 +165,8 @@ int main(int argc, char **argv) {
     // --------------------------------------------------
 
     lt::session ses(settings);
+
+    settings.set_int(lt::settings_pack::alert_mask, lt::alert::all_categories);
 
     // --------------------------------------------------
 
@@ -169,7 +184,7 @@ int main(int argc, char **argv) {
 
     // --------------------------------------------------
 
-    lt::sha1_hash ih = lt::hasher("test", 5).final();
+    lt::sha1_hash ih = lt::sha1_hash("b69744eee44498aaacd00edd0bf41736df37a012");
 
     torrent_view view;
     session_view ses_view;

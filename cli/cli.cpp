@@ -74,9 +74,9 @@ bool handle_alert(torrent_view &view, session_view &ses_view, lt::session &ses, 
   // https://github.com/arvidn/libtorrent/issues/602
   if (lt::dht_get_peers_reply_alert * p = lt::alert_cast<lt::dht_get_peers_reply_alert>(a)) {
     auto peers = p->peers();
-
-    for (auto peer : peers) {
-      std::cout << peer.address() << std::endl;
+    std::cout << p->info_hash.to_string() << std::endl;
+    for (auto const& peer : peers) {
+      std::cout << peer.address() << ":" << peer.port() << std::endl;
     }
     std::cout << "--------------------------------------------------" << std::endl;
 
@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
 
     // --------------------------------------------------
 
-    lt::sha1_hash ih = lt::sha1_hash("b69744eee44498aaacd00edd0bf41736df37a012");
+    lt::sha1_hash ih = lt::sha1_hash("16a7a586944f0c5c5797bd72e812bc23613ad9ce");
 
     torrent_view view;
     session_view ses_view;

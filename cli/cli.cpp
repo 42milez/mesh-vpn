@@ -86,6 +86,13 @@ bool handle_alert(torrent_view &view, session_view &ses_view, lt::session &ses, 
     return true;
   }
 
+  if (auto p = lt::alert_cast<lt::dht_log_alert>(a)) {
+    std::cout << "[ Message     ] " << p->message() << std::endl;
+    std::cout << "[ Log Message ] " << p->log_message() << std::endl;
+    std::cout << "--------------------------------------------------" << std::endl;
+    return true;
+  }
+
   return false;
 }
 
@@ -155,6 +162,7 @@ int main(int argc, char **argv) {
 //    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "router.magnets.im:6881");
 //    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "router.bittorrent.com:6881");
 //    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "dht.transmissionbt.com:6881");
+    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "torrent.ubuntu.com:6969");
 
     // --------------------------------------------------
 
@@ -189,7 +197,7 @@ int main(int argc, char **argv) {
 
     // --------------------------------------------------
 
-    lt::sha1_hash ih = lt::sha1_hash("4d399e8818ba94deededadc0ab92f88d8000bcf7");
+    lt::sha1_hash ih = lt::sha1_hash("1488d454915d860529903b61adb537012a0fe7c8");
 
     torrent_view view;
     session_view ses_view;

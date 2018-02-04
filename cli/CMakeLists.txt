@@ -1,4 +1,4 @@
-set(SOURCE_FILES cli.cpp print.cpp session_view.cpp torrent_view.cpp)
+set(SOURCE_FILES cli.cpp)
 
 add_executable(cli ${SOURCE_FILES})
 

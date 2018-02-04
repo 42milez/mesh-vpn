@@ -8,9 +8,6 @@
 #include "libtorrent/bdecode.hpp"
 #include "libtorrent/ip_filter.hpp"
 #include "libtorrent/session.hpp"
-#include "print.hpp"
-#include "session_view.hpp"
-#include "torrent_view.hpp"
 
 #include <boost/timer.hpp>
 
@@ -59,7 +56,7 @@ char const *timestamp() {
 std::vector<lt::dht_lookup> dht_active_requests;
 std::vector<lt::dht_routing_bucket> dht_routing_table;
 
-bool handle_alert(torrent_view &view, session_view &ses_view, lt::session &ses, lt::alert *a) {
+bool handle_alert(lt::alert *a) {
   // https://github.com/arvidn/libtorrent/issues/602
   if (auto p = lt::alert_cast<lt::dht_get_peers_reply_alert>(a)) {
     auto peers = p->peers();
@@ -160,10 +157,6 @@ int main(int argc, char **argv) {
 
     // --------------------------------------------------
 
-    lt::error_code ec;
-
-    // --------------------------------------------------
-
     lt::dht_settings dht;
     dht.privacy_lookups = true;
     ses.set_dht_settings(dht);
@@ -172,32 +165,17 @@ int main(int argc, char **argv) {
 
     lt::sha1_hash ih0 = lt::sha1_hash("3378363333347A743039326161646F7A31302E37");
 
-    torrent_view view;
-    session_view ses_view;
-
-    std::deque <std::string> events;
-
-    std::string out;
-    char str[500];
-    int pos = view.height() + ses_view.height();
-    set_cursor_pos(0, pos);
-
-    int cache_flags = lt::session::disk_cache_no_pieces;
-    lt::torrent_handle h = view.get_active_handle();
-
-    lt::cache_status cs;
-    ses.get_cache_info(&cs, h, cache_flags);
-
     // --------------------------------------------------
 
     boost::timer t;
+
+    ses.dht_announce(ih0, 12345);
 
     while (!exitHandler.shouldExit()) {
 
       if (t.elapsed() < 1) continue;
       t.restart();
 
-      ses.dht_announce(ih0, 12345);
       ses.dht_get_peers(ih0);
 
       // --------------------------------------------------
@@ -205,24 +183,16 @@ int main(int argc, char **argv) {
       std::vector<lt::alert*> alerts;
       ses.pop_alerts(&alerts);
       std::string now = timestamp();
-      for (auto i = alerts.begin(), end(alerts.end()); i != end; ++i) {
+      for (auto alert : alerts) {
         try {
-          if (!::handle_alert(view, ses_view, ses, *i)) {
-            std::string event_string;
-            events.emplace_back(event_string);
-            if (events.size() >= 20) events.pop_front();
+          if (!::handle_alert(alert)) {
+            // do nothing
           }
         } catch (std::exception &e) {
           // do nothing
         }
       }
       alerts.clear();
-
-      // --------------------------------------------------
-
-      out += "\x1b[J";
-      print(out.c_str());
-      fflush(stdout);
     }
   } else {
     std::cerr << "Invalid argument: " << arg << std::endl;

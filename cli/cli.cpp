@@ -60,36 +60,16 @@ std::vector<lt::dht_lookup> dht_active_requests;
 std::vector<lt::dht_routing_bucket> dht_routing_table;
 
 bool handle_alert(torrent_view &view, session_view &ses_view, lt::session &ses, lt::alert *a) {
-  if (lt::session_stats_alert * s = lt::alert_cast<lt::session_stats_alert>(a)) {
-    ses_view.update_counters(s->values,
-                             sizeof(s->values) / sizeof(s->values[0]),
-                             lt::duration_cast<lt::microseconds>(s->timestamp().time_since_epoch()).count());
-    return true;
-  }
-
-  if (auto p = lt::alert_cast<lt::dht_stats_alert>(a)) {
-    dht_active_requests = p->active_requests;
-    dht_routing_table = p->routing_table;
-    return true;
-  }
-
   // https://github.com/arvidn/libtorrent/issues/602
   if (auto p = lt::alert_cast<lt::dht_get_peers_reply_alert>(a)) {
     auto peers = p->peers();
-    std::cout << p->info_hash.to_string() << std::endl;
-    std::cout << p->message() << std::endl;
+    std::cout << "[ dht_get_peers_reply_alert ]" << std::endl;
+    std::cout << " - info_hash : " << p->info_hash.to_string() << std::endl;
+    std::cout << " - message   : " << p->message()             << std::endl;
     for (auto const& peer : peers) {
-      std::cout << peer.address() << ":" << peer.port() << std::endl;
+      std::cout << " - peer      : " << peer.address() << ":" << peer.port() << std::endl;
     }
-    std::cout << "--------------------------------------------------" << std::endl;
-
-    return true;
-  }
-
-  if (auto p = lt::alert_cast<lt::dht_log_alert>(a)) {
-    std::cout << "[ Message     ] " << p->message() << std::endl;
-    std::cout << "[ Log Message ] " << p->log_message() << std::endl;
-    std::cout << "--------------------------------------------------" << std::endl;
+    std::cout << std::endl;
     return true;
   }
 
@@ -159,10 +139,6 @@ int main(int argc, char **argv) {
     settings.set_int(lt::settings_pack::cache_size, cache_size);
     settings.set_int(lt::settings_pack::active_loaded_limit, active_loaded_limit);
     settings.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
-//    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "router.magnets.im:6881");
-//    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "router.bittorrent.com:6881");
-//    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "dht.transmissionbt.com:6881");
-    settings.set_str(lt::settings_pack::dht_bootstrap_nodes, "torrent.ubuntu.com:6969");
 
     // --------------------------------------------------
 
@@ -180,9 +156,6 @@ int main(int argc, char **argv) {
     lt::session ses(settings);
 
     settings.set_int(lt::settings_pack::alert_mask, lt::alert::all_categories);
-
-    // --------------------------------------------------
-
     ses.set_ip_filter(loaded_ip_filter);
 
     // --------------------------------------------------
@@ -197,7 +170,7 @@ int main(int argc, char **argv) {
 
     // --------------------------------------------------
 
-    lt::sha1_hash ih = lt::sha1_hash("1488d454915d860529903b61adb537012a0fe7c8");
+    lt::sha1_hash ih0 = lt::sha1_hash("3378363333347A743039326161646F7A31302E37");
 
     torrent_view view;
     session_view ses_view;
@@ -224,7 +197,8 @@ int main(int argc, char **argv) {
       if (t.elapsed() < 1) continue;
       t.restart();
 
-      ses.dht_get_peers(ih);
+      ses.dht_announce(ih0, 12345);
+      ses.dht_get_peers(ih0);
 
       // --------------------------------------------------
 

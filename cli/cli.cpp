@@ -220,48 +220,6 @@ int main(int argc, char **argv) {
 
       // --------------------------------------------------
 
-      int bucket = 0;
-      for (auto i = dht_routing_table.begin(), end(dht_routing_table.end()); i != end; ++i, ++bucket) {
-        char const *progress_bar = "################################"
-                                   "################################"
-                                   "################################"
-                                   "################################";
-        char const *short_progress_bar = "--------";
-        snprintf(str,
-                 sizeof(str),
-                 "%3d [%3d, %d] %s%s\x1b[K\n",
-                 bucket,
-                 i->num_nodes,
-                 i->num_replacements,
-                 progress_bar + (128 - i->num_nodes),
-                 short_progress_bar + (8 - (std::min)(8, i->num_replacements)));
-        out += str;
-        pos += 1;
-      }
-
-      for (auto i = dht_active_requests.begin(), end(dht_active_requests.end()); i != end; ++i) {
-        snprintf(str,
-                 sizeof(str), "  %10s [limit: %2d] "
-                 "in-flight: %-2d "
-                 "left: %-3d "
-                 "1st-timeout: %-2d "
-                 "timeouts: %-2d "
-                 "responses: %-2d "
-                 "last_sent: %-2d\x1b[K\n",
-                 i->type,
-                 i->branch_factor,
-                 i->outstanding_requests,
-                 i->nodes_left,
-                 i->first_timeout,
-                 i->timeouts,
-                 i->responses,
-                 i->last_sent);
-        out += str;
-        pos += 1;
-      }
-
-      // --------------------------------------------------
-
       out += "\x1b[J";
       print(out.c_str());
       fflush(stdout);

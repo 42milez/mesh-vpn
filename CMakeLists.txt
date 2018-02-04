@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.5)
+cmake_minimum_required(VERSION 3.9.6)
 
 #set(CMAKE_VERBOSE_MAKEFILE 1)
 
@@ -27,12 +27,12 @@ include(ExternalProject)
 
 #  OpenSSL
 # --------------------------------------------------
-include(${PROJECT_SOURCE_DIR}/vendor/openssl/openssl.cmake)
+include(cmake/modules/openssl.cmake)
 
 #  Boost
 # --------------------------------------------------
-include(${PROJECT_SOURCE_DIR}/vendor/boost/boost.cmake)
+include(cmake/modules/boost.cmake)
 
 #  libtorrent
 # --------------------------------------------------
-include(${PROJECT_SOURCE_DIR}/vendor/libtorrent/libtorrent.cmake)
+include(cmake/modules/libtorrent.cmake)

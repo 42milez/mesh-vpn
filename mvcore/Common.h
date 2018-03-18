@@ -4,7 +4,6 @@
 #define DEV_QUOTED_HELPER(s) #s
 #define DEV_QUOTED(s) DEV_QUOTED_HELPER(s)
 
-namespace dev
-{
-    extern char const* Version;
+namespace mvcore {
+  extern char const *Version;
 }

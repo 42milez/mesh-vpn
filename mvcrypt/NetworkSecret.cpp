@@ -20,7 +20,7 @@ namespace mvcrypt {
       exit(1);
     }
 
-    this->ipnet = network::IpNet{
+    this->ipnet = mvnetwork::IpNet{
       boost::asio::ip::address_v4::from_string(net_info[0]),
       net_info[1]
     };
@@ -36,7 +36,7 @@ namespace mvcrypt {
       exit(1);
     }
 
-    this->ipnet = network::IpNet{
+    this->ipnet = mvnetwork::IpNet{
       boost::asio::ip::address_v4::from_string(net_info[0]),
       net_info[1]
     };
@@ -55,7 +55,7 @@ namespace mvcrypt {
     return str;
   }
 
-  std::tuple<std::string, network::IpNet> NetworkSecret::secret() {
+  std::tuple<std::string, mvnetwork::IpNet> NetworkSecret::secret() {
     return std::make_tuple(this->key, this->ipnet);
   };
 

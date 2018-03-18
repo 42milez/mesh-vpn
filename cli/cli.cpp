@@ -26,12 +26,12 @@ void help() {
 }
 
 void version() {
-  std::cout << "Version: " << dev::Version << std::endl;
+  std::cout << "Version: " << mvcore::Version << std::endl;
   std::cout << "Build: "   << DEV_QUOTED(BUILD_PLATFORM) << "/" << DEV_QUOTED(BUILD_TYPE) << std::endl;
   exit(0);
 }
 
-class ExitHandler : public dev::rpc::SystemManager {
+class ExitHandler : public mvcore::SystemManager {
 public:
   void exit() { exitHandler(0); }
 
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 
       auto ns = mvcrypt::NetworkSecret{ "10.7.0.0/24" };
       std::string key;
-      network::IpNet ipnet;
+      mvnetwork::IpNet ipnet;
       std::tie(key, ipnet) = ns.secret();
       std::cout << key << std::endl;
       std::cout << ipnet.ip4.to_string() << std::endl;
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 
       auto ns2 = mvcrypt::NetworkSecret::unmarshal(marshaled);
       std::string key2;
-      network::IpNet ipnet2;
+      mvnetwork::IpNet ipnet2;
       std::tie(key2, ipnet2) = ns2->secret();
       std::cout << "cli: " << key2 << std::endl;
       std::cout << "cli: " << ipnet2.ip4.to_string() << std::endl;

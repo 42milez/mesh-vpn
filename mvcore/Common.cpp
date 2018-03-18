@@ -1,7 +1,6 @@
 #include "BuildInfo.h"
 #include "Common.h"
 
-namespace dev
-{
-    char const* Version = PROJECT_VERSION;
+namespace mvcore {
+  char const *Version = PROJECT_VERSION;
 }

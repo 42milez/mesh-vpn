@@ -12,7 +12,7 @@ namespace mvcrypt {
   class NetworkSecret {
   private:
     std::string key;
-    network::IpNet ipnet;
+    mvnetwork::IpNet ipnet;
 
     NetworkSecret(std::string key, std::string cidr);
 
@@ -21,7 +21,7 @@ namespace mvcrypt {
   public:
     NetworkSecret(std::string cidr);
 
-    std::tuple<std::string, network::IpNet> secret();
+    std::tuple<std::string, mvnetwork::IpNet> secret();
 
     std::string marshal();
 

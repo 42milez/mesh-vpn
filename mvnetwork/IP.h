@@ -4,7 +4,7 @@
 
 #include "boost/asio.hpp"
 
-namespace network {
+namespace mvnetwork {
     struct IpNet {
         boost::asio::ip::address_v4 ip4;
         std::string netmask;

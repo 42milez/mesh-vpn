@@ -23,9 +23,9 @@ namespace {
   // --------------------------------------------------
 
   void help() {
-    std::cout << "Usage vpn [OPTIONS]" << std::endl
-              << "Options: "           << std::endl << std::endl
-              << "CLI usage:"          << std::endl;
+    std::cout << "Usage mvpn [OPTIONS]" << std::endl
+              << "Options: "            << std::endl << std::endl
+              << "CLI usage:"           << std::endl;
   }
 
   void version() {

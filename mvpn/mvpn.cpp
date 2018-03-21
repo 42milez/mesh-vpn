@@ -18,70 +18,64 @@
 
 namespace lt = libtorrent;
 
-void help() {
-  std::cout << "Usage vpn [OPTIONS]" << std::endl
-            << "Options: "           << std::endl << std::endl
-            << "CLI usage:"          << std::endl;
-  exit(0);
-}
-
-void version() {
-  std::cout << "Version: " << mvcore::Version << std::endl;
-  std::cout << "Build: "   << DEV_QUOTED(BUILD_PLATFORM) << "/" << DEV_QUOTED(BUILD_TYPE) << std::endl;
-  exit(0);
-}
-
-class ExitHandler : public mvcore::System {
-public:
-  void exit() { exitHandler(0); }
-
-  static void exitHandler(int) { s_shouldExit = true; }
-
-  bool shouldExit() const { return s_shouldExit; }
-
-private:
-  static bool s_shouldExit;
-};
-
-bool ExitHandler::s_shouldExit = false;
-
-char const *timestamp() {
-  time_t t = std::time(0);
-  tm *timeinfo = std::localtime(&t);
-  static char str[200];
-  std::strftime(str, 200, "%b %d %X", timeinfo);
-  return str;
-}
-
-std::vector<lt::dht_lookup> dht_active_requests;
-std::vector<lt::dht_routing_bucket> dht_routing_table;
-
-bool handle_alert(lt::alert *a) {
-  // https://github.com/arvidn/libtorrent/issues/602
-  if (auto p = lt::alert_cast<lt::dht_get_peers_reply_alert>(a)) {
-    auto peers = p->peers();
-    std::cout << "[ dht_get_peers_reply_alert ]" << std::endl;
-    std::cout << " - info_hash : " << p->info_hash.to_string() << std::endl;
-    std::cout << " - message   : " << p->message()             << std::endl;
-    for (auto const& peer : peers) {
-      std::cout << " - peer      : " << peer.address() << ":" << peer.port() << std::endl;
-    }
-    std::cout << std::endl;
-    return true;
+namespace {
+  void help() {
+    std::cout << "Usage vpn [OPTIONS]" << std::endl
+              << "Options: "           << std::endl << std::endl
+              << "CLI usage:"          << std::endl;
   }
 
-  return false;
+  void version() {
+    std::cout << "Version: " << mvcore::Version << std::endl;
+    std::cout << "Build: "   << DEV_QUOTED(BUILD_PLATFORM) << "/" << DEV_QUOTED(BUILD_TYPE) << std::endl;
+  }
+
+  class ExitHandler : public mvcore::System {
+  public:
+    static void toggle(int) { s_shouldExit = !s_shouldExit; }
+    static bool shouldExit() { return s_shouldExit; }
+  private:
+    static bool s_shouldExit;
+  };
+
+  bool ExitHandler::s_shouldExit = false;
+
+  char const *timestamp() {
+    time_t t = std::time(0);
+    tm *timeinfo = std::localtime(&t);
+    static char str[200];
+    std::strftime(str, 200, "%b %d %X", timeinfo);
+    return str;
+  }
+
+  std::vector<lt::dht_lookup> dht_active_requests;
+  std::vector<lt::dht_routing_bucket> dht_routing_table;
+
+  bool handle_alert(lt::alert *a) {
+    // https://github.com/arvidn/libtorrent/issues/602
+    if (auto p = lt::alert_cast<lt::dht_get_peers_reply_alert>(a)) {
+      auto peers = p->peers();
+      std::cout << "[ dht_get_peers_reply_alert ]" << std::endl;
+      std::cout << " - info_hash : " << p->info_hash.to_string() << std::endl;
+      std::cout << " - message   : " << p->message()             << std::endl;
+      for (auto const& peer : peers) {
+        std::cout << " - peer      : " << peer.address() << ":" << peer.port() << std::endl;
+      }
+      std::cout << std::endl;
+      return true;
+    }
+
+    return false;
+  }
 }
 
 int main(int argc, char **argv) {
 
   //  Handle signals
   // --------------------------------------------------
-  ExitHandler exitHandler;
-
-  signal(SIGABRT, &ExitHandler::exitHandler);
-  signal(SIGTERM, &ExitHandler::exitHandler);
-  signal(SIGINT, &ExitHandler::exitHandler);
+  signal(SIGABRT, &ExitHandler::toggle);
+  signal(SIGTERM, &ExitHandler::toggle);
+  signal(SIGINT, &ExitHandler::toggle);
 
   //  Parse arguments
   // --------------------------------------------------
@@ -91,8 +85,10 @@ int main(int argc, char **argv) {
     // do nothing
   } else if (arg == "-h" || arg == "--help") {
     help();
+    return 0;
   } else if (arg == "-v" || arg == "--version") {
     version();
+    return 0;
   } else if (arg == "-n" || arg == "--new") {
     if (false) {
       // キーが引数に与えられている場合（既存のキーからシークレットを復元する操作）
@@ -171,7 +167,7 @@ int main(int argc, char **argv) {
 
     ses.dht_announce(ih0, 12345);
 
-    while (!exitHandler.shouldExit()) {
+    while (!ExitHandler::shouldExit()) {
 
       if (t.elapsed() < 1) continue;
       t.restart();

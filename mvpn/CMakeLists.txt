@@ -1,8 +1,8 @@
-set(SOURCE_FILES cli.cpp)
+set(SOURCE_FILES mvpn.cpp)
 
-add_executable(cli ${SOURCE_FILES})
+add_executable(mvpn ${SOURCE_FILES})
 
-add_dependencies(cli libtorrent)
+add_dependencies(mvpn libtorrent)
 
 set(openssl_libs
   ${CMAKE_BINARY_DIR}/lib/libcrypto.a
@@ -18,7 +18,7 @@ set(libtorrent_libs
 include_directories(${CMAKE_BINARY_DIR}/include/openssl)
 include_directories(${CMAKE_BINARY_DIR}/include/boost)
 
-target_link_libraries(cli
+target_link_libraries(mvpn
   PRIVATE
   mvcore
   mvcrypt

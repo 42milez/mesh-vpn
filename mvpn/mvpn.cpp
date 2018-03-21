@@ -118,9 +118,9 @@ int main(int argc, char **argv) {
       std::string key2;
       mvnetwork::IpNet ipnet2;
       std::tie(key2, ipnet2) = ns2->secret();
-      std::cout << "cli: " << key2 << std::endl;
-      std::cout << "cli: " << ipnet2.ip4.to_string() << std::endl;
-      std::cout << "cli: " << ipnet2.netmask << std::endl;
+      std::cout << "mvpn: " << key2 << std::endl;
+      std::cout << "mvpn: " << ipnet2.ip4.to_string() << std::endl;
+      std::cout << "mvpn: " << ipnet2.netmask << std::endl;
     }
   } else if (arg == "-j" || arg == "--join") {
     auto cache_size = 1024;

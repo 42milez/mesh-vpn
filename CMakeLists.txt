@@ -18,7 +18,7 @@ include(Utils)
 
 configure_project()
 
-add_subdirectory(cli)
+add_subdirectory(mvpn)
 add_subdirectory(mvcore)
 add_subdirectory(mvcrypt)
 add_subdirectory(mvutil)

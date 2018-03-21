@@ -6,7 +6,9 @@
 #define DEV_QUOTED(s) DEV_QUOTED_HELPER(s)
 
 namespace mvcore {
+
   extern char const *Version;
-}
+
+} // namespace: mvcore
 
 #endif // MESH_VPN_COMMON_H

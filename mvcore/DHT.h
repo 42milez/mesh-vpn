@@ -4,11 +4,13 @@
 #include "Service.h"
 
 namespace mvcore {
+
   class DHT : public Service {
   public:
     void start();
     void stop();
   };
-}
+
+} // namespace: mvcore
 
 #endif // MESH_VPN_DHT_H

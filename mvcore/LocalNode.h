@@ -6,6 +6,7 @@
 #include "Service.h"
 
 namespace mvcore {
+
   class LocalNode {
   public:
     void start();
@@ -13,6 +14,7 @@ namespace mvcore {
   private:
     std::vector<Service> services;
   };
-}
+
+} // namespace: mvcore
 
 #endif // MESH_VPN_LOCALNODE_H

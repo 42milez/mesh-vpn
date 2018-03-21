@@ -28,4 +28,4 @@ namespace mvcrypt {
     static NetworkSecret* unmarshal(std::string secret);
   };
 
-}
+} // namespace: mvcrypt

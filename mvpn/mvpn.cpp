@@ -16,9 +16,12 @@
 #include "mvcore/Common.h"
 #include "mvcore/System.h"
 
-namespace lt = libtorrent;
-
 namespace {
+
+  // --------------------------------------------------
+  //  Utils
+  // --------------------------------------------------
+
   void help() {
     std::cout << "Usage vpn [OPTIONS]" << std::endl
               << "Options: "           << std::endl << std::endl
@@ -30,6 +33,10 @@ namespace {
     std::cout << "Build: "   << DEV_QUOTED(BUILD_PLATFORM) << "/" << DEV_QUOTED(BUILD_TYPE) << std::endl;
   }
 
+  // --------------------------------------------------
+  //  Exit Handler
+  // --------------------------------------------------
+
   class ExitHandler : public mvcore::System {
   public:
     static void toggle(int) { s_shouldExit = !s_shouldExit; }
@@ -39,6 +46,12 @@ namespace {
   };
 
   bool ExitHandler::s_shouldExit = false;
+
+  // --------------------------------------------------
+  //  Libtorrent
+  // --------------------------------------------------
+
+  namespace lt = libtorrent;
 
   char const *timestamp() {
     time_t t = std::time(0);
@@ -67,7 +80,8 @@ namespace {
 
     return false;
   }
-}
+
+} // namespace
 
 int main(int argc, char **argv) {
 

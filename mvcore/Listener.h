@@ -11,5 +11,4 @@ namespace mvcore {
   };
 }
 
-
-#endif //MESH_VPN_LISTENER_H
+#endif // MESH_VPN_LISTENER_H

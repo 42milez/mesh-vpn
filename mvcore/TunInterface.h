@@ -12,4 +12,4 @@ namespace mvcore {
 }
 
 
-#endif //MESH_VPN_INTERFACE_H
+#endif // MESH_VPN_INTERFACE_H

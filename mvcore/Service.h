@@ -9,5 +9,4 @@ namespace mvcore {
   };
 }
 
-
-#endif //MESH_VPN_SERVICE_H
+#endif // MESH_VPN_SERVICE_H

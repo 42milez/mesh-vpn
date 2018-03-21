@@ -11,5 +11,4 @@ namespace mvcore {
   };
 }
 
-
-#endif //MESH_VPN_DHT_H
+#endif // MESH_VPN_DHT_H

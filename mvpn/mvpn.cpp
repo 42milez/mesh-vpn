@@ -14,7 +14,7 @@
 #include "BuildInfo.h"
 #include "mvcrypt/NetworkSecret.h"
 #include "mvcore/Common.h"
-#include "mvcore/AdminUtils.h"
+#include "mvcore/System.h"
 
 namespace lt = libtorrent;
 
@@ -31,7 +31,7 @@ void version() {
   exit(0);
 }
 
-class ExitHandler : public mvcore::SystemManager {
+class ExitHandler : public mvcore::System {
 public:
   void exit() { exitHandler(0); }
 

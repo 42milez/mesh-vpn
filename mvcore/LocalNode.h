@@ -15,4 +15,4 @@ namespace mvcore {
   };
 }
 
-#endif //MESH_VPN_LOCALNODE_H
+#endif // MESH_VPN_LOCALNODE_H

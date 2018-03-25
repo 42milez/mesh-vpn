@@ -105,7 +105,7 @@ namespace mvcore {
 
   void TunInterface::start() {
     auto tun_ptr = this->tun.get();
-    this->sock = tun_ptr.open_tun();
+    this->sock = tun_ptr->open_tun();
     if (this->sock < 0) {
       std::cerr << "Can't create a tun interface." << std::endl;
     }

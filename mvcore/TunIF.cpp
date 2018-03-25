@@ -112,8 +112,7 @@ namespace mvcore {
 
     std::cout << "A tun interface has been created." << std::endl;
 
-    //execl("echo 'pass' | sudo -S ifconfig utun10 inet 10.0.7.1 10.0.7.1 mtu 1500 up");
-    execl("/usr/bin/sudo", "/sbin/ifconfig", "utun10", "inet", "10.0.7.1", "10.0.7.1", "mtu", "1500", "up");
+    system("ifconfig utun10 inet 10.0.7.1 10.0.7.1 mtu 1500 up");
 
     std::cout << "TunIF has started." << std::endl;
   }

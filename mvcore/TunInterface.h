@@ -5,10 +5,15 @@
 
 namespace mvcore {
 
-  class TunInterface : public Service {
+  class TunInterface: public Service {
   public:
-    void start();
-    void stop();
+    TunInterface(u_int32_t unit);
+    void start() override;
+    void stop() override;
+  private:
+    class TunImpl;
+    std::unique_ptr<TunImpl> tun;
+    int sock;
   };
 
 } // namespace: mvcore

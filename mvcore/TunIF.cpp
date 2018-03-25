@@ -16,11 +16,11 @@
 //#include <sys/socket.h>
 //#include <netinet/in.h>
 
-#include "TunInterface.h"
+#include "TunIF.h"
 
 namespace mvcore {
 
-  class TunInterface::TunImpl {
+  class TunIF::TunImpl {
   public:
     TunImpl(u_int32_t unit);
     int open_tun();
@@ -29,9 +29,9 @@ namespace mvcore {
     u_int32_t unit;
   };
 
-  TunInterface::TunImpl::TunImpl(u_int32_t unit) : unit(unit) {}
+  TunIF::TunImpl::TunImpl(u_int32_t unit) : unit(unit) {}
 
-  int TunInterface::TunImpl::open_tun() {
+  int TunIF::TunImpl::open_tun() {
 
     // Protocol families are mapped onto address families
     // --------------------------------------------------
@@ -97,13 +97,13 @@ namespace mvcore {
     return fd;
   }
 
-  void TunInterface::TunImpl::close_tun() {
+  void TunIF::TunImpl::close_tun() {
 
   }
 
-  TunInterface::TunInterface(u_int32_t unit): tun{std::make_unique<TunInterface::TunImpl>(unit)} {}
+  TunIF::TunIF(u_int32_t unit): tun{std::make_unique<TunIF::TunImpl>(unit)} {}
 
-  void TunInterface::start() {
+  void TunIF::start() {
     auto tun_ptr = this->tun.get();
     this->sock = tun_ptr->open_tun();
     if (this->sock < 0) {
@@ -115,12 +115,12 @@ namespace mvcore {
     //execl("echo 'pass' | sudo -S ifconfig utun10 inet 10.0.7.1 10.0.7.1 mtu 1500 up");
     execl("/usr/bin/sudo", "/sbin/ifconfig", "utun10", "inet", "10.0.7.1", "10.0.7.1", "mtu", "1500", "up");
 
-    std::cout << "TunInterface has started." << std::endl;
+    std::cout << "TunIF has started." << std::endl;
   }
 
-  void TunInterface::stop() {
+  void TunIF::stop() {
     close(this->sock);
-    std::cout << "TunInterface has stopped." << std::endl;
+    std::cout << "TunIF has stopped." << std::endl;
   }
 
 }

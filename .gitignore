@@ -1,6 +1,2 @@
 # CLion
 cmake-build-debug
-
-# Visual Studio Code
-.vscode
-build

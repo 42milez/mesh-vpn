@@ -74,7 +74,7 @@ set(LibtorrentRasterbar_INCLUDE_DIRS ${LibtorrentRasterbar_INCLUDE_DIR})
 
 if (NOT Boost_SYSTEM_FOUND OR NOT Boost_THREAD_FOUND OR NOT Boost_DATE_TIME_FOUND OR NOT Boost_CHRONO_FOUND)
 
-  find_package(Boost)
+  find_package(Boost COMPONENTS system thread date_time chrono)
 
   set(LibtorrentRasterbar_LIBRARIES ${LibtorrentRasterbar_LIBRARIES} ${Boost_LIBRARIES})
   set(LibtorrentRasterbar_INCLUDE_DIRS ${LibtorrentRasterbar_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})

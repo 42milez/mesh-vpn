@@ -23,15 +23,16 @@ namespace mvcore {
   class TunIF::TunImpl {
   public:
     TunImpl(u_int32_t unit);
-    int open_tun();
-    void close_tun();
+    int open_sock();
+    void close_sock();
   private:
     u_int32_t unit;
+    int fd;
   };
 
   TunIF::TunImpl::TunImpl(u_int32_t unit) : unit(unit) {}
 
-  int TunIF::TunImpl::open_tun() {
+  int TunIF::TunImpl::open_sock() {
 
     // Protocol families are mapped onto address families
     // --------------------------------------------------
@@ -44,7 +45,7 @@ namespace mvcore {
       return -1;
     }
 
-    // set the socket non-blocking
+    // set the fd non-blocking
     auto err = fcntl(fd, F_SETFL, O_NONBLOCK);
     if (err != 0) {
       close(fd);
@@ -88,29 +89,32 @@ namespace mvcore {
     sc.ss_sysaddr = AF_SYS_CONTROL;
     sc.sc_unit    = this->unit;
 
+    seteuid(0);
+
     if (connect(fd, (struct sockaddr *)&sc, sizeof(sc)) == -1) {
-      std::cerr << "connect(AF_SYS_CONTROL)" << std::endl;
+      std::cerr << "Can't create a tun interface." << std::endl;
       close(fd);
       return -1;
     }
 
-    return fd;
+    seteuid(getuid());
+
+    std::cout << "A tun interface has been created." << std::endl;
+
+    this->fd = fd;
+
+    return 0;
   }
 
-  void TunIF::TunImpl::close_tun() {
-
+  void TunIF::TunImpl::close_sock() {
+    close(this->fd);
   }
 
   TunIF::TunIF(u_int32_t unit): tun{std::make_unique<TunIF::TunImpl>(unit)} {}
 
   void TunIF::start() {
     auto tun_ptr = this->tun.get();
-    this->sock = tun_ptr->open_tun();
-    if (this->sock < 0) {
-      std::cerr << "Can't create a tun interface." << std::endl;
-    }
-
-    std::cout << "A tun interface has been created." << std::endl;
+    tun_ptr->open_sock();
 
     system("ifconfig utun10 inet 10.0.7.1 10.0.7.1 mtu 1500 up");
 
@@ -118,7 +122,8 @@ namespace mvcore {
   }
 
   void TunIF::stop() {
-    close(this->sock);
+    auto tun_ptr = this->tun.get();
+    tun_ptr->close_sock();
     std::cout << "TunIF has stopped." << std::endl;
   }
 

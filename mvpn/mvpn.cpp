@@ -90,6 +90,8 @@ namespace {
 
 int main(int argc, char **argv) {
 
+  seteuid(getuid());
+
   //  Handle signals
   // --------------------------------------------------
   signal(SIGABRT, &ExitHandler::toggle);

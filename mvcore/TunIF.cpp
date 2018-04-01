@@ -6,15 +6,18 @@
 #include <sys/kern_event.h>
 #include <unistd.h>
 #include <fcntl.h>
-//#include <arpa/inet.h>
-//#include <net/if.h>
-//#include <netinet/ip.h>
-//#include <netinet/ip_icmp.h>
-//#include <netinet/tcp.h>
-//#include <netinet/udp.h>
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h>
+#include <netinet/tcp.h>
+#include <netinet/udp.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+
 
 #include "TunIF.h"
 
@@ -25,6 +28,7 @@ namespace mvcore {
     TunImpl(u_int32_t unit);
     int open_sock();
     void close_sock();
+    void make_utun(const std::string& ifname, const std::string& option);
   private:
     u_int32_t unit;
     int fd;
@@ -41,7 +45,6 @@ namespace mvcore {
     //    https://developer.apple.com/library/content/documentation/Darwin/Conceptual/NKEConceptual/control/control.html
     auto fd = socket(PF_SYSTEM, SOCK_DGRAM, SYSPROTO_CONTROL);
     if (fd == -1) {
-      std::cerr << "socket(SYSPROTO_CONTROL)" << std::endl;
       return -1;
     }
 
@@ -71,12 +74,10 @@ namespace mvcore {
     ctl_info ci{};
 
     if (strlcpy(ci.ctl_name, UTUN_CONTROL_NAME, sizeof(ci.ctl_name)) >= sizeof(ci.ctl_name)) {
-      std::cerr << "UTUN_CONTROL_NAME is too long" << std::endl;
       return -1;
     }
 
     if (ioctl(fd, CTLIOCGINFO, &ci) == -1) {
-      std::cerr << "ioctl(CTLIOCGINFO)" << std::endl;
       close(fd);
       return -1;
     }
@@ -89,17 +90,10 @@ namespace mvcore {
     sc.ss_sysaddr = AF_SYS_CONTROL;
     sc.sc_unit    = this->unit;
 
-    seteuid(0);
-
     if (connect(fd, (struct sockaddr *)&sc, sizeof(sc)) == -1) {
-      std::cerr << "Can't create a tun interface." << std::endl;
       close(fd);
       return -1;
     }
-
-    seteuid(getuid());
-
-    std::cout << "A tun interface has been created." << std::endl;
 
     this->fd = fd;
 
@@ -110,14 +104,49 @@ namespace mvcore {
     close(this->fd);
   }
 
-  TunIF::TunIF(u_int32_t unit): tun{std::make_unique<TunIF::TunImpl>(unit)} {}
+  void TunIF::TunImpl::make_utun(const std::string& ifname, const std::string& option) {
+    // http://man7.org/linux/man-pages/man3/getifaddrs.3.html
+    struct ifaddrs *ifaddr, *ifa;
+    int family, s, n;
+    char host[NI_MAXHOST];
+
+    if (getifaddrs(&ifaddr) == -1) {
+      return;
+    }
+
+    for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+      if (ifa->ifa_addr == NULL) {
+        continue;
+      }
+      family = ifa->ifa_addr->sa_family;
+
+      std::string af;
+      if (family == AF_INET) af = "AF_INET";
+      else if (family == AF_INET6) af = "AF_INET6";
+      else af = family;
+
+      std::cout << ifa->ifa_name << ", " << family << std::endl;
+    }
+
+    std::string cmd = "ifconfig";
+
+    system((cmd + " " + ifname + " " + option).c_str());
+  }
+
+  TunIF::TunIF(u_int32_t unit): tun{std::make_unique<TunIF::TunImpl>(unit)} {
+    std::cout << "sc_unit: " << unit << std::endl;
+  }
 
   void TunIF::start() {
     auto tun_ptr = this->tun.get();
-    tun_ptr->open_sock();
 
-    system("ifconfig utun10 inet 10.0.7.1 10.0.7.1 mtu 1500 up");
+    if (tun_ptr->open_sock() == 0) {
+      std::cout << "A tun interface has been created." << std::endl;
+    } else {
+      std::cerr << "Can't create a tun interface." << std::endl;
+    }
 
+    tun_ptr->make_utun("utun10", "inet 10.0.7.1 10.0.7.1 mtu 1500 up");
     std::cout << "TunIF has started." << std::endl;
   }
 

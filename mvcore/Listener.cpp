@@ -4,11 +4,11 @@
 namespace mvcore {
 
   void Listener::start() {
-    std::cout << "Lister has started." << std::endl;
+    std::cout << "[INFO] Lister has started." << std::endl;
   }
 
   void Listener::stop() {
-    std::cout << "Listener has stopped." << std::endl;
+    std::cout << "[INFO] Listener has stopped." << std::endl;
   }
 
 }

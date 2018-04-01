@@ -6,18 +6,13 @@
 #include <sys/kern_event.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <arpa/inet.h>
-#include <net/if.h>
-#include <netinet/ip.h>
-#include <netinet/ip_icmp.h>
-#include <netinet/tcp.h>
-#include <netinet/udp.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <ifaddrs.h>
 #include <netdb.h>
-
+#include <vector>
+#include <algorithm>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
 
 #include "TunIF.h"
 
@@ -28,10 +23,13 @@ namespace mvcore {
     TunImpl(u_int32_t unit);
     int open_sock();
     void close_sock();
-    void make_utun(const std::string& ifname, const std::string& option);
+    int make_utun(const std::string& option);
   private:
     u_int32_t unit;
     int fd;
+    std::string ifname();
+    bool starts_with(const char* pre, const char* str);
+    int ctl_id;
   };
 
   TunIF::TunImpl::TunImpl(u_int32_t unit) : unit(unit) {}
@@ -82,13 +80,15 @@ namespace mvcore {
       return -1;
     }
 
+    this->ctl_id = ci.ctl_id;
+
     sockaddr_ctl sc{};
 
     sc.sc_id      = ci.ctl_id;
     sc.sc_len     = sizeof(sc);
     sc.sc_family  = AF_SYSTEM;
     sc.ss_sysaddr = AF_SYS_CONTROL;
-    sc.sc_unit    = this->unit;
+    sc.sc_unit    = 0;
 
     if (connect(fd, (struct sockaddr *)&sc, sizeof(sc)) == -1) {
       close(fd);
@@ -104,56 +104,64 @@ namespace mvcore {
     close(this->fd);
   }
 
-  void TunIF::TunImpl::make_utun(const std::string& ifname, const std::string& option) {
-    // http://man7.org/linux/man-pages/man3/getifaddrs.3.html
-    struct ifaddrs *ifaddr, *ifa;
-    int family, s, n;
-    char host[NI_MAXHOST];
+  int TunIF::TunImpl::make_utun(const std::string& option) {
+    auto ifname = this->ifname();
 
-    if (getifaddrs(&ifaddr) == -1) {
-      return;
-    }
-
-    for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
-      if (ifa->ifa_addr == NULL) {
-        continue;
-      }
-      family = ifa->ifa_addr->sa_family;
-
-      std::string af;
-      if (family == AF_INET) af = "AF_INET";
-      else if (family == AF_INET6) af = "AF_INET6";
-      else af = family;
-
-      std::cout << ifa->ifa_name << ", " << family << std::endl;
-    }
+    std::cout << "[INFO] Virtual Device: " << ifname << std::endl;
 
     std::string cmd = "ifconfig";
 
-    system((cmd + " " + ifname + " " + option).c_str());
+    return system((cmd + " " + ifname + " " + option).c_str());
   }
 
-  TunIF::TunIF(u_int32_t unit): tun{std::make_unique<TunIF::TunImpl>(unit)} {
-    std::cout << "sc_unit: " << unit << std::endl;
+  TunIF::TunIF(u_int32_t unit): tun{std::make_unique<TunIF::TunImpl>(unit)} {}
+
+  std::string TunIF::TunImpl::ifname() {
+    struct ifaddrs *ifa;
+
+    if (getifaddrs(&ifa) == -1) {
+      return "";
+    }
+
+    std::vector<std::string> ifa_names;
+    const std::string prefix = "utun";
+
+    while (ifa != nullptr) {
+      if (this->starts_with(prefix.c_str(), ifa->ifa_name)) {
+        ifa_names.emplace_back(ifa->ifa_name);
+      }
+      ifa = ifa->ifa_next;
+    }
+
+    return ifa_names.at((unsigned long) this->ctl_id - 1);
+  }
+
+  // https://stackoverflow.com/questions/4770985/how-to-check-if-a-string-starts-with-another-string-in-c
+  bool TunIF::TunImpl::starts_with(const char *pre, const char *str) {
+    size_t len_pre = strlen(pre);
+    size_t len_str = strlen(str);
+    return len_str < len_pre ? false : strncmp(pre, str, len_pre) == 0;
   }
 
   void TunIF::start() {
     auto tun_ptr = this->tun.get();
 
     if (tun_ptr->open_sock() == 0) {
-      std::cout << "A tun interface has been created." << std::endl;
+      std::cout << "[INFO] A tun interface has been created." << std::endl;
     } else {
-      std::cerr << "Can't create a tun interface." << std::endl;
+      std::cerr << "[ERROR] Can't create a tun interface." << std::endl;
     }
 
-    tun_ptr->make_utun("utun10", "inet 10.0.7.1 10.0.7.1 mtu 1500 up");
-    std::cout << "TunIF has started." << std::endl;
+    if (tun_ptr->make_utun("inet 10.0.7.1 10.0.7.1 mtu 1500 up") == 0) {
+
+    }
+    std::cout << "[INFO] TunIF has started." << std::endl;
   }
 
   void TunIF::stop() {
     auto tun_ptr = this->tun.get();
     tun_ptr->close_sock();
-    std::cout << "TunIF has stopped." << std::endl;
+    std::cout << "[INFO] TunIF has stopped." << std::endl;
   }
 
 }

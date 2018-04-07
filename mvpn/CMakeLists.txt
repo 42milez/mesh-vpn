@@ -17,6 +17,7 @@ set(libtorrent_libs
 
 include_directories(${CMAKE_BINARY_DIR}/include/openssl)
 include_directories(${CMAKE_BINARY_DIR}/include/boost)
+include_directories(${CMAKE_BINARY_DIR}/include/libtorrent)
 
 target_link_libraries(mvpn
   PRIVATE

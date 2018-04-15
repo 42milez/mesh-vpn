@@ -144,7 +144,7 @@ namespace mvcore {
   }
 
   void TunIF::start() {
-    auto tun_ptr = this->tun.get();
+    TunIF::TunImpl *tun_ptr = this->tun.get();
 
     if (tun_ptr->open_sock() == 0) {
       std::cout << "[INFO] A tun interface has been created." << std::endl;
@@ -159,7 +159,7 @@ namespace mvcore {
   }
 
   void TunIF::stop() {
-    auto tun_ptr = this->tun.get();
+    TunIF::TunImpl *tun_ptr = this->tun.get();
     tun_ptr->close_sock();
     std::cout << "[INFO] TunIF has stopped." << std::endl;
   }

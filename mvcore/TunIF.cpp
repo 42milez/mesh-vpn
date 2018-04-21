@@ -29,7 +29,6 @@ namespace mvcore {
     int fd;
     std::string ifname();
     bool starts_with(const char* pre, const char* str);
-    int ctl_id;
   };
 
   TunIF::TunImpl::TunImpl(u_int32_t unit) : unit(unit) {}
@@ -79,8 +78,6 @@ namespace mvcore {
       close(fd);
       return -1;
     }
-
-    this->ctl_id = ci.ctl_id;
 
     sockaddr_ctl sc{};
 
@@ -133,7 +130,7 @@ namespace mvcore {
       ifa = ifa->ifa_next;
     }
 
-    return ifa_names.at((unsigned long) this->ctl_id - 1);
+    return ifa_names.back();
   }
 
   // https://stackoverflow.com/questions/4770985/how-to-check-if-a-string-starts-with-another-string-in-c

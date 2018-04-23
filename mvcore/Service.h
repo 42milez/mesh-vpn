@@ -5,8 +5,9 @@ namespace mvcore {
 
   class Service {
   public:
-    virtual void start();
-    virtual void stop();
+    virtual ~Service() = default;
+    virtual void start() = 0;
+    virtual void stop() = 0;
   };
 
 } // namespace: mvcore

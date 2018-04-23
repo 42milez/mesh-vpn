@@ -2,6 +2,7 @@
 #define MESH_VPN_DHT_H
 
 #include "Service.h"
+#include "Worker.h"
 
 namespace mvcore {
 
@@ -9,6 +10,8 @@ namespace mvcore {
   public:
     void start();
     void stop();
+  private:
+    std::unique_ptr<Worker> worker;
   };
 
 } // namespace: mvcore

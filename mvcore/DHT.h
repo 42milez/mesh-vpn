@@ -8,8 +8,8 @@ namespace mvcore {
 
   class DHT : public Service {
   public:
-    void start();
-    void stop();
+    void start() override;
+    void stop() override;
   private:
     std::unique_ptr<Worker> worker;
   };

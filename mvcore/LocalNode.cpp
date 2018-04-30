@@ -1,25 +1,31 @@
 #include "LocalNode.h"
-#include "mvcore/DHT.h"
-#include "mvcore/Listener.h"
-#include "mvcore/TunIF.h"
+#include "DHT.h"
+#include "Listener.h"
+#include "NetTable.h"
+#include "TunIF.h"
 
 namespace mvcore {
 
   LocalNode::LocalNode() {
-    this->services.emplace_back(new TunIF(static_cast<u_int32_t >(strtol("10.0.7.1", nullptr, 10) + 1)));
-    this->services.emplace_back(new Listener());
-    this->services.emplace_back(new DHT());
+    auto nettable = new NetTable();
+    auto dht = new DHT();
+    auto listener = new Listener(nettable);
+    //auto tunif = new TunIF();
+    this->services[ServiceIdentifier::dht] = dht;
+    this->services[ServiceIdentifier::listener] = listener;
+    this->services[ServiceIdentifier::nettable] = nettable;
+    //this->services[ServiceIdentifier::tunif] = tunif;
   }
 
   void LocalNode::start() {
     for (auto service : this->services) {
-      service->start();
+      service.second->start();
     }
   }
 
   void LocalNode::stop() {
     for (auto service : this->services) {
-      service->stop();
+      service.second->stop();
     }
   }
 

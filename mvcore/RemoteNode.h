@@ -4,7 +4,12 @@
 namespace mvcore {
 
   class RemoteNode {
-
+  public:
+    // http://exlight.net/devel/cpp/explicit.html
+    explicit RemoteNode(int soc);
+    ~RemoteNode();
+  private:
+    int soc;
   };
 
 } // namespace: mvcore

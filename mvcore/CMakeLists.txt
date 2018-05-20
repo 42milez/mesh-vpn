@@ -1,7 +1,7 @@
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 
-add_library(mvcore ${sources} ${headers} NetTable.cpp NetTable.h)
+add_library(mvcore ${sources} ${headers})
 
 add_dependencies(mvcore BuildInfo.h)
 
@@ -11,4 +11,4 @@ target_include_directories(mvcore PUBLIC ..)
 # Needed to prevent including system-level boost headers:
 target_include_directories(mvcore SYSTEM PUBLIC)
 
-target_link_libraries(mvcore)
+target_link_libraries(mvcore spdlog)

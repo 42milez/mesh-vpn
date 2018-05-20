@@ -1,7 +1,7 @@
 #ifndef MESH_VPN_NETTABLE_H
 #define MESH_VPN_NETTABLE_H
 
-#include "spdlog-src/include/spdlog/spdlog.h"
+#include "spdlog/spdlog.h"
 
 #include <condition_variable>
 #include <list>

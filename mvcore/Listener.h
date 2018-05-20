@@ -1,7 +1,7 @@
 #ifndef MESH_VPN_LISTENER_H
 #define MESH_VPN_LISTENER_H
 
-#include "spdlog-src/include/spdlog/spdlog.h"
+#include "spdlog/spdlog.h"
 
 #include "mvnetwork/NetworkIO.h"
 #include "NetTable.h"

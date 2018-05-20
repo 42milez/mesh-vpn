@@ -1,7 +1,7 @@
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 
-add_library(mvutil ${sources} ${headers} Log.cpp Log.h)
+add_library(mvutil ${sources} ${headers})
 
 target_include_directories(mvutil PUBLIC ..)
 

@@ -1,7 +1,7 @@
 #ifndef MESH_VPN_DHT_H
 #define MESH_VPN_DHT_H
 
-#include "spdlog-src/include/spdlog/spdlog.h"
+#include "spdlog/spdlog.h"
 
 #include "Service.h"
 #include "Worker.h"

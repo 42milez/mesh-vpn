@@ -78,7 +78,6 @@ execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
 execute_process(COMMAND ${CMAKE_COMMAND} --build .
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/spdlog-download)
 
-add_subdirectory(${CMAKE_BINARY_DIR}/spdlog-src
-  ${CMAKE_BINARY_DIR}/spdlog-build)
+add_subdirectory(${CMAKE_BINARY_DIR}/spdlog-src ${CMAKE_BINARY_DIR}/spdlog-build)
 
-include_directories(${CMAKE_BINARY_DIR}/spdlog-src/include)
+include_directories(${spdlog_SOURCE_DIR}/include)

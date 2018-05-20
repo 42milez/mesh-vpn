@@ -1,7 +1,8 @@
 #ifndef MESH_VPN_LOCALNODE_H
 #define MESH_VPN_LOCALNODE_H
 
-#include <vector>
+#include <map>
+#include <string>
 
 namespace mvcore {
 
@@ -13,7 +14,13 @@ namespace mvcore {
     void start();
     void stop();
   private:
-    std::vector<Service*> services;
+    enum class ServiceIdentifier {
+      dht,
+      listener,
+      nettable,
+      tunif
+    };
+    std::map<ServiceIdentifier, Service*> services;
   };
 
 } // namespace: mvcore

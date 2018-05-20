@@ -4,25 +4,25 @@
 
 namespace mvcore {
 
-  Listener::Listener(mvcore::NetTable *nettable) : nettable(nettable) {}
+  Listener::Listener(mvcore::NetTable *nettable) : nettable_(nettable) {
+    logger_ = spdlog::stdout_color_mt("listener");
+  }
 
   void Listener::start() {
-    this->listen = std::make_unique<mvnetwork::NetworkIO>(8888);
-    this->worker = std::make_unique<Worker>();
-    this->worker->assign([this]{
-      std::cout << "worker is running..." << std::endl;
-      this->listen->wait([this](const int soc){
-        std::cout << "Connection request has arrived." << std::endl;
-        this->nettable->add_remote_node(soc);
+    listen_ = std::make_unique<mvnetwork::NetworkIO>(8888);
+    worker_ = std::make_unique<Worker>();
+    worker_->assign([this]{
+      listen_->wait([this](const int soc){
+        this->logger_->info("Connection request has arrived.");
+        this->nettable_->add_remote_node(soc);
       });
     });
-    this->worker->start();
-    std::cout << "[INFO] Lister has started." << std::endl;
+    worker_->start();
   }
 
   void Listener::stop() {
-    this->worker->stop();
-    std::cout << "[INFO] Listener has stopped." << std::endl;
+    worker_->stop();
+    logger_->info("stop");
   }
 
 } // mvcore

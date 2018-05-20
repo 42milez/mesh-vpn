@@ -1,6 +1,8 @@
 #ifndef MESH_VPN_NETTABLE_H
 #define MESH_VPN_NETTABLE_H
 
+#include "spdlog-src/include/spdlog/spdlog.h"
+
 #include <condition_variable>
 #include <list>
 #include <mutex>
@@ -12,15 +14,17 @@ namespace mvcore {
 
   class NetTable : public Service {
   public:
+    NetTable();
     void add_remote_node(int soc);
     void start() override;
     void stop() override;
   private:
     using unique_lock = std::unique_lock<std::mutex>;
     std::unique_lock<std::mutex> get_lock();
-    std::mutex mtx;
-    std::condition_variable cv;
-    std::list<RemoteNode> remote_nodes;
+    std::condition_variable cv_;
+    std::shared_ptr<spdlog::logger> logger_;
+    std::mutex mtx_;
+    std::list<RemoteNode> remote_nodes_;
   };
 
 } // namespace mvcore

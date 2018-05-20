@@ -17,6 +17,7 @@ namespace mvcore {
   private:
     // https://stackoverflow.com/questions/12797051/implicit-instantiation-of-undefined-template-when-forward-declaring-template-c
     std::function<void()> fn;
+    bool is_abort { false };
     std::thread *thread = nullptr;
     void run();
   };

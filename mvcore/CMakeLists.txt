@@ -1,7 +1,7 @@
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 
-add_library(mvcore ${sources} ${headers})
+add_library(mvcore ${sources} ${headers} NetTable.cpp NetTable.h)
 
 add_dependencies(mvcore BuildInfo.h)
 

@@ -18,7 +18,7 @@ namespace mvnetwork {
 
   void Socket::initialize(const int port) {
 
-    //  CREATE SOCKET
+    //  Create socket
     // --------------------------------------------------
 
     struct addrinfo hints { AI_PASSIVE, AF_INET, SOCK_STREAM, 0, 0, nullptr, nullptr, nullptr };
@@ -79,7 +79,7 @@ namespace mvnetwork {
 
     this->soc = soc;
 
-    //  READY kqueue
+    //  Ready for connection request
     // --------------------------------------------------
 
     this->mux = kqueue();

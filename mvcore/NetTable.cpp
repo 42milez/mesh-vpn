@@ -4,26 +4,26 @@
 
 namespace mvcore {
 
-  void NetTable::start() {
-
+  NetTable::NetTable() {
+    logger_ = spdlog::stdout_color_mt("nettable");
   }
 
-  void NetTable::stop() {
+  void NetTable::start() {}
 
-  }
+  void NetTable::stop() {}
 
   void NetTable::add_remote_node(const int soc) {
     unique_lock lk = get_lock();
-    cv.wait(lk, [this, soc]{
-      this->remote_nodes.emplace_back(soc);
-      std::cout << "Remote node has been added." << std::endl;
+    cv_.wait(lk, [this, soc]{
+      this->remote_nodes_.emplace_back(soc);
+      this->logger_->info("Remote node has been added.");
       return true;
     });
-    cv.notify_all();
+    cv_.notify_all();
   }
 
   std::unique_lock<std::mutex> NetTable::get_lock() {
-    return std::unique_lock<std::mutex>(this->mtx);
+    return std::unique_lock<std::mutex>(mtx_);
   }
 
 }

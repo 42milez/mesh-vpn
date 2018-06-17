@@ -39,8 +39,7 @@ include(cmake/modules/libtorrent.cmake)
 
 #  Google Test
 # --------------------------------------------------
-configure_file(cmake/modules/gtest.cmake
-  googletest-download/CMakeLists.txt)
+configure_file(cmake/modules/gtest.cmake googletest-download/CMakeLists.txt)
 
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
@@ -68,3 +67,17 @@ endif()
 
 enable_testing()
 add_subdirectory(test)
+
+#  spdlog
+# --------------------------------------------------
+configure_file(cmake/modules/spdlog.cmake spdlog-download/CMakeLists.txt)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/spdlog-download)
+
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/spdlog-download)
+
+add_subdirectory(${CMAKE_BINARY_DIR}/spdlog-src ${CMAKE_BINARY_DIR}/spdlog-build)
+
+include_directories(${spdlog_SOURCE_DIR}/include)

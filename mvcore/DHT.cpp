@@ -4,18 +4,21 @@
 
 namespace mvcore {
 
+  DHT::DHT() {
+    logger_ = spdlog::stdout_color_mt("dht");
+  }
+
   void DHT::start() {
-    this->worker = std::make_unique<Worker>();
-    this->worker->assign([]{
-      std::cout << "worker is running..." << std::endl;
+    worker_ = std::make_unique<Worker>();
+    worker_->assign([this]{
+      this->logger_->info("running...");
     });
-    this->worker->start();
-    std::cout << "[INFO] DHT has started." << std::endl;
+    worker_->start();
   }
 
   void DHT::stop() {
-    this->worker->stop();
-    std::cout << "[INFO] DHT has stopped." << std::endl;
+    worker_->stop();
+    logger_->info("stop");
   }
 
 } // namespace: mvcore

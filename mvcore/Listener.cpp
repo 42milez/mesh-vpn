@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 
 #include "Listener.h"
 
@@ -9,7 +10,9 @@ namespace mvcore {
   }
 
   void Listener::start() {
-    listen_ = std::make_unique<mvnetwork::NetworkIO>(8888);
+    auto ni = std::make_unique<mvnetwork::NetworkInterface>();
+    ni->port = 8888;
+    listen_ = std::make_unique<mvnetwork::NetworkIO>(std::forward<decltype(ni)>(ni));
     worker_ = std::make_unique<Worker>();
     worker_->assign([this]{
       listen_->wait([this](const int soc){

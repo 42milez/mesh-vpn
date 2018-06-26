@@ -1,4 +1,4 @@
-set(SOURCE_FILES mvpn.cpp ../mvnetwork/Socket.cpp ../mvnetwork/Socket.h ../mvnetwork/NetworkIO.cpp ../mvnetwork/NetworkIO.h)
+set(SOURCE_FILES mvpn.cpp ../mvnetwork/Socket.cpp ../mvnetwork/Socket.h ../mvnetwork/NetworkIO.cpp ../mvnetwork/NetworkIO.h ../mvnetwork/NetworkInterface.h)
 
 add_executable(mvpn ${SOURCE_FILES})
 

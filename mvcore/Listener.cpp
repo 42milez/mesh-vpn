@@ -1,3 +1,4 @@
+#include <boost/type_index.hpp>
 #include <iostream>
 #include <utility>
 
@@ -12,12 +13,12 @@ namespace mvcore {
   void Listener::start() {
     auto ni = std::make_unique<mvnetwork::NetworkInterface>();
     ni->port = 8888;
-    listen_ = std::make_unique<mvnetwork::NetworkIO>(std::forward<decltype(ni)>(ni));
+    listen_ = std::make_unique<mvnetwork::NetworkIO>(std::move(ni));
     worker_ = std::make_unique<Worker>();
     worker_->assign([this]{
-      listen_->wait([this](const int soc){
+      listen_->wait([this](const int fd){
         this->logger_->info("Connection request has arrived.");
-        this->nettable_->add_remote_node(soc);
+        this->nettable_->add_remote_node(fd);
       });
     });
     worker_->start();

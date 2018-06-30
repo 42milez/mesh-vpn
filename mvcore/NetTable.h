@@ -7,6 +7,8 @@
 #include <list>
 #include <mutex>
 
+#include "mvnetwork/Socket.h"
+
 #include "RemoteNode.h"
 #include "Service.h"
 
@@ -15,7 +17,7 @@ namespace mvcore {
   class NetTable : public Service {
   public:
     NetTable();
-    void add_remote_node(int soc);
+    void add_remote_node(const int fd);
     void start() override;
     void stop() override;
   private:

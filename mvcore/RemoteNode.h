@@ -9,7 +9,6 @@ namespace mvcore {
   public:
     // http://exlight.net/devel/cpp/explicit.html
     explicit RemoteNode(const int fd);
-//    RemoteNode(RemoteNode&& rn) = default;
   private:
     std::unique_ptr<mvnetwork::Socket> soc_;
   };

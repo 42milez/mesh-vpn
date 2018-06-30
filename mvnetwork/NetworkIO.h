@@ -11,11 +11,8 @@ namespace mvnetwork {
   class NetworkIO {
   public:
     NetworkIO(std::unique_ptr<NetworkInterface>&& ni);
-    NetworkIO(std::unique_ptr<Socket>&& soc);
-    void wait(std::function<void(int soc)> fn);
+    void wait(std::function<void(const int fd)> fn);
   private:
-    std::unique_ptr<Socket> create_socket(int port);
-    std::unique_ptr<NetworkInterface> ni_;
     std::unique_ptr<Socket> soc_;
   };
 

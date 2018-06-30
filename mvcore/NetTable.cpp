@@ -12,10 +12,10 @@ namespace mvcore {
 
   void NetTable::stop() {}
 
-  void NetTable::add_remote_node(const int soc) {
+  void NetTable::add_remote_node(const int fd) {
     unique_lock lk = get_lock();
-    cv_.wait(lk, [this, soc]{
-      this->remote_nodes_.emplace_back(soc);
+    cv_.wait(lk, [this, fd]{
+      this->remote_nodes_.emplace_back(fd);
       this->logger_->info("Remote node has been added.");
       return true;
     });

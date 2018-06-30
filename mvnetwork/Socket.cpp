@@ -8,15 +8,21 @@
 
 namespace mvnetwork {
 
-  Socket::Socket(const int port) {
-    this->initialize(port);
+  Socket::Socket(const int fd) {
+    fd_ = fd;
+    create_multiplexer();
+  }
+
+  Socket::Socket(std::unique_ptr<NetworkInterface> ni) {
+    create_socket(ni->port);
+    create_multiplexer();
   }
 
   Socket::~Socket() {
-    close(this->soc);
+    close(fd_);
   }
 
-  void Socket::initialize(const int port) {
+  void Socket::create_socket(const int port) {
 
     //  Create socket
     // --------------------------------------------------
@@ -43,9 +49,7 @@ namespace mvnetwork {
       return;
     }
 
-    int soc;
-
-    if ((soc = socket(res0->ai_family, res0->ai_socktype, res0->ai_protocol)) == -1) {
+    if ((fd_ = socket(res0->ai_family, res0->ai_socktype, res0->ai_protocol)) == -1) {
       std::cout << "[ERROR] socket()" << std::endl;
       freeaddrinfo(res0);
       return;
@@ -54,46 +58,43 @@ namespace mvnetwork {
     int opt { 1 };
     socklen_t opt_len { sizeof(opt) };
 
-    if (setsockopt(soc, SOL_SOCKET, SO_REUSEADDR, &opt, opt_len) == -1) {
+    if (setsockopt(fd_, SOL_SOCKET, SO_REUSEADDR, &opt, opt_len) == -1) {
       std::cout << "[ERROR] setsockopt()" << std::endl;
-      close(soc);
+      close(fd_);
       freeaddrinfo(res0);
       return;
     }
 
-    if (bind(soc, res0->ai_addr, res0->ai_addrlen) == -1) {
+    if (bind(fd_, res0->ai_addr, res0->ai_addrlen) == -1) {
       std::cout << "[ERROR] bind()" << std::endl;
-      close(soc);
+      close(fd_);
       freeaddrinfo(res0);
       return;
     }
 
-    if (listen(soc, SOMAXCONN) == -1) {
+    if (listen(fd_, SOMAXCONN) == -1) {
       std::cout << "[ERROR] listen()" << std::endl;
-      close(soc);
+      close(fd_);
       freeaddrinfo(res0);
       return;
     }
 
     freeaddrinfo(res0);
+  }
 
-    this->soc = soc;
-
-    //  Ready for connection request
-    // --------------------------------------------------
-
-    this->mux = kqueue();
-    if (this->mux == -1) {
+  void Socket::create_multiplexer() {
+    mux_ = kqueue();
+    if (mux_ == -1) {
       std::cout << "[ERROR] kqueue" << std::endl;
       return;
     }
-    struct kevent event{ (uintptr_t) this->soc, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, nullptr };
-    kevent(this->mux, &event, 1, nullptr, 0, nullptr);
+    struct kevent event{ (uintptr_t) fd_, EVFILT_READ, EV_ADD|EV_CLEAR, 0, 0, nullptr };
+    kevent(mux_, &event, 1, nullptr, 0, nullptr);
   }
 
-  void Socket::wait(std::function<void(const int soc)> fn) {
+  void Socket::wait(std::function<void(const int fd)> fn) {
     struct kevent events[10];
-    auto nfds = kevent(this->mux, nullptr, 0, events, 10, nullptr);
+    auto nfds = kevent(mux_, nullptr, 0, events, 10, nullptr);
     if (nfds == -1) {
       std::cout << "[ERROR] kevent" << std::endl;
       return;
@@ -103,11 +104,11 @@ namespace mvnetwork {
     } else {
       for (auto i = 0; i < nfds; i++) {
         auto soc = (int) events[i].ident;
-        if (soc == this->soc) {
+        if (soc == fd_) {
           struct sockaddr_storage addr{};
           socklen_t socklen = sizeof(addr);
-          int acc = accept(soc, (struct sockaddr *) &addr, &socklen);
-          fn(acc);
+          auto fd = accept(soc, (struct sockaddr *) &addr, &socklen);
+          fn(fd);
         }
       }
     }

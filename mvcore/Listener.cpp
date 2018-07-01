@@ -1,4 +1,3 @@
-#include <boost/type_index.hpp>
 #include <iostream>
 #include <utility>
 

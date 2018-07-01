@@ -10,6 +10,7 @@ namespace mvnetwork {
 
   Socket::Socket(const int fd) {
     fd_ = fd;
+    logger_ = spdlog::stdout_color_mt("socket");
     create_multiplexer();
   }
 
@@ -92,7 +93,7 @@ namespace mvnetwork {
     kevent(mux_, &event, 1, nullptr, 0, nullptr);
   }
 
-  void Socket::wait(std::function<void(const int fd)> fn) {
+  void Socket::wait_for_accept(std::function<void(const int fd)> fn) {
     struct kevent events[10];
     auto nfds = kevent(mux_, nullptr, 0, events, 10, nullptr);
     if (nfds == -1) {
@@ -108,7 +109,34 @@ namespace mvnetwork {
           struct sockaddr_storage addr{};
           socklen_t socklen = sizeof(addr);
           auto fd = accept(soc, (struct sockaddr *) &addr, &socklen);
+          if (fd == -1) {
+            std::cout << "[ERROR] " << errno << std::endl;
+          }
           fn(fd);
+        }
+      }
+    }
+  }
+
+  void Socket::wait_for_read(std::function<void()> fn) {
+    struct kevent events[10];
+    auto nfds = kevent(mux_, nullptr, 0, events, 10, nullptr);
+    if (nfds == -1) {
+      std::cout << "[ERROR] kevent" << std::endl;
+      return;
+    } else if (nfds == 0) {
+      std::cout << "[ERROR] timeout" << std::endl;
+      return;
+    } else {
+      char *ptr;
+      for (auto i = 0; i < nfds; i++) {
+        auto soc = (int) events[i].ident;
+        if (soc == fd_) {
+          std::string buf(512, '\0');
+          auto len = recv(soc, &buf[0], sizeof(buf), 0);
+          buf.resize(len);
+          logger_->info(buf);
+          fn();
         }
       }
     }

@@ -22,6 +22,6 @@ namespace mvcore {
     void run();
   };
 
-};
+} // mvcore
 
 #endif //MESH_VPN_WORKER_H

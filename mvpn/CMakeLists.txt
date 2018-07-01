@@ -23,6 +23,7 @@ target_link_libraries(mvpn
   PRIVATE
   mvcore
   mvcrypt
+  mvnetwork
   mvutil
   ${openssl_libs}
   ${boost_libs}

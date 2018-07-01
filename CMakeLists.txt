@@ -21,6 +21,7 @@ configure_project()
 add_subdirectory(mvpn)
 add_subdirectory(mvcore)
 add_subdirectory(mvcrypt)
+add_subdirectory(mvnetwork)
 add_subdirectory(mvutil)
 
 include(ExternalProject)

@@ -6,9 +6,9 @@
 
 namespace mvcore {
 
-  class Service2 {
+  class Service {
   public:
-    virtual ~Service2() = default;
+    virtual ~Service() = default;
     virtual void start() = 0;
     virtual void stop() = 0;
   protected:

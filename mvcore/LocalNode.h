@@ -6,7 +6,7 @@
 
 namespace mvcore {
 
-  class Service2;
+  class Service;
 
   class LocalNode {
   public:
@@ -20,7 +20,7 @@ namespace mvcore {
       nettable,
       tunif
     };
-    std::map<ServiceIdentifier, Service2*> services;
+    std::map<ServiceIdentifier, Service*> services;
   };
 
 } // namespace: mvcore

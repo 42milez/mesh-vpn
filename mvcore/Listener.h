@@ -5,11 +5,11 @@
 
 #include "mvnetwork/NetworkIO.h"
 #include "NetTable.h"
-#include "Service2.h"
+#include "Service.h"
 
 namespace mvcore {
 
-  class Listener : public Service2 {
+  class Listener : public Service {
   public:
     explicit Listener(NetTable* nettable);
     ~Listener() override;

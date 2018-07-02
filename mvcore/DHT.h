@@ -3,12 +3,12 @@
 
 #include "spdlog/spdlog.h"
 
-#include "Service2.h"
+#include "Service.h"
 #include "Worker.h"
 
 namespace mvcore {
 
-  class DHT : public Service2 {
+  class DHT : public Service {
   public:
     DHT();
     ~DHT() override;

@@ -1,12 +1,12 @@
-#include "Service2.h"
+#include "Service.h"
 
 namespace mvcore {
 
-  void Service2::assign(std::function<void()> fn) {
+  void Service::assign(std::function<void()> fn) {
     fn_ = std::move(fn);
   }
 
-  void Service2::run() {
+  void Service::run() {
     if (fn_) {
       thread_ = std::make_unique<std::thread>([&fn = fn_, &is_abort = is_abort_]{
         for (;;) {
@@ -18,7 +18,7 @@ namespace mvcore {
     }
   }
 
-  void Service2::terminate() {
+  void Service::terminate() {
     if (thread_ && thread_->joinable()) {
       is_abort_ = true;
       thread_->join();

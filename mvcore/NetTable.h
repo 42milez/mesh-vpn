@@ -10,14 +10,14 @@
 #include "mvnetwork/Socket.h"
 
 #include "RemoteNode.h"
-#include "Service.h"
+#include "Service2.h"
 
 namespace mvcore {
 
-  class NetTable : public Service {
+  class NetTable : public Service2 {
   public:
     NetTable();
-    void add_remote_node(const int fd);
+    void add_remote_node(int fd);
     void start() override;
     void stop() override;
   private:

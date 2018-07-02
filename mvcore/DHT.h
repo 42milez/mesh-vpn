@@ -3,19 +3,19 @@
 
 #include "spdlog/spdlog.h"
 
-#include "Service.h"
+#include "Service2.h"
 #include "Worker.h"
 
 namespace mvcore {
 
-  class DHT : public Service {
+  class DHT : public Service2 {
   public:
     DHT();
+    ~DHT() override;
     void start() override;
     void stop() override;
   private:
     std::shared_ptr<spdlog::logger> logger_;
-    std::unique_ptr<Worker> worker_;
   };
 
 } // namespace: mvcore

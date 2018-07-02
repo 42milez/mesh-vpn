@@ -10,7 +10,7 @@ namespace mvnetwork {
     soc_ = std::make_unique<Socket>(std::move(ni));
   }
 
-  void NetworkIO::wait(std::function<void(const int fd)> fn) {
+  void NetworkIO::wait_for_accept(std::function<void(const int fd)> fn) {
     soc_->wait_for_accept(fn);
   }
 

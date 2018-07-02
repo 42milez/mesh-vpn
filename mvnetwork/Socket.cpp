@@ -93,7 +93,7 @@ namespace mvnetwork {
     kevent(mux_, &event, 1, nullptr, 0, nullptr);
   }
 
-  void Socket::wait_for_accept(std::function<void(const int fd)> fn) {
+  void Socket::wait_for_accept(const std::function<void(const int fd)>& fn) {
     struct kevent events[10];
     auto nfds = kevent(mux_, nullptr, 0, events, 10, nullptr);
     if (nfds == -1) {
@@ -118,7 +118,7 @@ namespace mvnetwork {
     }
   }
 
-  void Socket::wait_for_read(std::function<void()> fn) {
+  void Socket::wait_for_read(const std::function<void()>& fn) {
     struct kevent events[10];
     auto nfds = kevent(mux_, nullptr, 0, events, 10, nullptr);
     if (nfds == -1) {

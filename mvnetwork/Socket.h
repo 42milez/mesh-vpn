@@ -15,8 +15,8 @@ namespace mvnetwork {
     Socket(std::unique_ptr<NetworkInterface> ni);
     Socket(const Socket& soc) = default;
     ~Socket();
-    void wait_for_accept(std::function<void(const int fd)> fn);
-    void wait_for_read(std::function<void()> fn);
+    void wait_for_accept(const std::function<void(const int fd)>& fn);
+    void wait_for_read(const std::function<void()>& fn);
   private:
     void create_socket(int port);
     void create_multiplexer();

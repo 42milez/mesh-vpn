@@ -4,7 +4,6 @@
 #include "spdlog/spdlog.h"
 
 #include "Service.h"
-#include "Worker.h"
 
 namespace mvcore {
 

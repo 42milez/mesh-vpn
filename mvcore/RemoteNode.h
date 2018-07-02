@@ -4,7 +4,7 @@
 #include "spdlog/spdlog.h"
 
 #include "mvcore/Service.h"
-#include "mvnetwork/Socket.h"
+#include "mvnetwork/NetworkIO.h"
 
 namespace mvcore {
 
@@ -16,7 +16,7 @@ namespace mvcore {
     explicit RemoteNode(int fd);
     ~RemoteNode();
   private:
-    std::unique_ptr<mvnetwork::Socket> soc_;
+    std::unique_ptr<mvnetwork::NetworkIO> listener_;
     std::shared_ptr<spdlog::logger> logger_;
   };
 

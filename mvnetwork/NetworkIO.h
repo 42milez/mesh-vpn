@@ -3,17 +3,17 @@
 
 #include <memory>
 
+#include "NetworkInterface.h"
 #include "Socket.h"
 
 namespace mvnetwork {
 
   class NetworkIO {
   public:
-    NetworkIO(int port);
-    void wait(std::function<void(int soc)> fn);
+    NetworkIO(std::unique_ptr<NetworkInterface>&& ni);
+    void wait(std::function<void(const int fd)> fn);
   private:
-    void initialize(int port);
-    std::unique_ptr<Socket> soc;
+    std::unique_ptr<Socket> soc_;
   };
 
 } // namespace mvnetwork

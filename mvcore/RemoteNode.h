@@ -1,15 +1,23 @@
 #ifndef MESH_VPN_REMOTENODE_H
 #define MESH_VPN_REMOTENODE_H
 
+#include "spdlog/spdlog.h"
+
+#include "mvcore/Service2.h"
+#include "mvnetwork/Socket.h"
+
 namespace mvcore {
 
-  class RemoteNode {
+  class RemoteNode : public Service2 {
   public:
+    void start() override;
+    void stop() override;
     // http://exlight.net/devel/cpp/explicit.html
-    explicit RemoteNode(int soc);
+    explicit RemoteNode(int fd);
     ~RemoteNode();
   private:
-    int soc;
+    std::unique_ptr<mvnetwork::Socket> soc_;
+    std::shared_ptr<spdlog::logger> logger_;
   };
 
 } // namespace: mvcore

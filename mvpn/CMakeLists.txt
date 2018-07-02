@@ -1,4 +1,4 @@
-set(SOURCE_FILES mvpn.cpp ../mvnetwork/Socket.cpp ../mvnetwork/Socket.h ../mvnetwork/NetworkIO.cpp ../mvnetwork/NetworkIO.h)
+set(SOURCE_FILES mvpn.cpp)
 
 add_executable(mvpn ${SOURCE_FILES})
 
@@ -23,6 +23,7 @@ target_link_libraries(mvpn
   PRIVATE
   mvcore
   mvcrypt
+  mvnetwork
   mvutil
   ${openssl_libs}
   ${boost_libs}

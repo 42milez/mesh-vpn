@@ -11,7 +11,7 @@ namespace mvnetwork {
   class NetworkIO {
   public:
     NetworkIO(std::unique_ptr<NetworkInterface>&& ni);
-    void wait(std::function<void(const int fd)> fn);
+    void wait_for_accept(std::function<void(const int fd)> fn);
   private:
     std::unique_ptr<Socket> soc_;
   };

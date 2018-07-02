@@ -6,20 +6,19 @@
 #include "mvnetwork/NetworkIO.h"
 #include "NetTable.h"
 #include "Service.h"
-#include "Worker.h"
 
 namespace mvcore {
 
   class Listener : public Service {
   public:
     explicit Listener(NetTable* nettable);
+    ~Listener() override;
     void start() override;
     void stop() override;
   private:
-    std::unique_ptr<mvnetwork::NetworkIO> listen_;
-    std::shared_ptr<spdlog::logger> logger_;
     NetTable *nettable_;
-    std::unique_ptr<Worker> worker_;
+    std::unique_ptr<mvnetwork::NetworkIO> listener_;
+    std::shared_ptr<spdlog::logger> logger_;
   };
 
 } // namespace: mvcore

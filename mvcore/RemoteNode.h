@@ -3,12 +3,12 @@
 
 #include "spdlog/spdlog.h"
 
-#include "mvcore/Service2.h"
+#include "mvcore/Service.h"
 #include "mvnetwork/Socket.h"
 
 namespace mvcore {
 
-  class RemoteNode : public Service2 {
+  class RemoteNode : public Service {
   public:
     void start() override;
     void stop() override;

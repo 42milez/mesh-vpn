@@ -17,7 +17,7 @@ namespace mvcore {
   class NetTable : public Service {
   public:
     NetTable();
-    void add_remote_node(const int fd);
+    void add_remote_node(int fd);
     void start() override;
     void stop() override;
   private:

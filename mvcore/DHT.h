@@ -11,11 +11,11 @@ namespace mvcore {
   class DHT : public Service {
   public:
     DHT();
+    ~DHT() override;
     void start() override;
     void stop() override;
   private:
     std::shared_ptr<spdlog::logger> logger_;
-    std::unique_ptr<Worker> worker_;
   };
 
 } // namespace: mvcore

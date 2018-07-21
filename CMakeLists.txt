@@ -16,8 +16,8 @@ set(HUNTER_JOBS_NUMBER 4)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-  URL "https://github.com/ruslo/hunter/archive/v0.21.16.tar.gz"
-  SHA1 "aa1faccd24f33dd2c368f85a4e9ca2e5d9c249cb"
+  URL "https://github.com/42milez/hunter/archive/v0.23.0z.tar.gz"
+  SHA1 "ce68d3f5c7b80d193f8ec0b836d8cbf7c0d23b6d"
   LOCAL
 )
 

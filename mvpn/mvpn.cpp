@@ -24,9 +24,9 @@ namespace {
   // --------------------------------------------------
 
   void help() {
-    std::cout << "Usage mvpn [OPTIONS]" << std::endl
-              << "Options: "            << std::endl << std::endl
-              << "CLI usage:"           << std::endl;
+    std::cout << "Usage: mvpn [OPTIONS]" << std::endl
+              << "Options: "             << std::endl << std::endl
+              << "CLI usage:"            << std::endl;
   }
 
   void version() {
@@ -98,11 +98,14 @@ int main(int argc, char **argv) {
 
   //  Parse arguments
   // --------------------------------------------------
+  if (argc == 1) {
+    std::cout << "Invalid argument: Specify at least one argument." << std::endl;
+    return 0;
+  }
+
   std::string arg = argv[1];
 
-  if (false) {
-    // do nothing
-  } else if (arg == "-h" || arg == "--help") {
+  if (arg == "-h" || arg == "--help") {
     help();
   } else if (arg == "-v" || arg == "--version") {
     version();

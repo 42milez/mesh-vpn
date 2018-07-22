@@ -9,9 +9,13 @@ A decentralized VPN, inspired by [meshbird](https://github.com/meshbird/meshbird
 
 # Road map
 
-# Quick start
+# Build
 
 ```
 $ brew install autoconf automake libtool
 $ cmake --build ./cmake-build-debug --target mvpn -- -j 4
 ```
+
+# Test
+
+# Run

@@ -11,8 +11,4 @@ target_include_directories(mvcrypt PUBLIC ..)
 
 #target_include_directories(mvcrypt SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
 
-target_link_libraries(
-  mvcrypt
-  PUBLIC
-  Boost::boost
-)
+target_link_libraries(mvcrypt PUBLIC Boost::boost)

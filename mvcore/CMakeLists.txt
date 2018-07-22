@@ -9,6 +9,6 @@ add_dependencies(mvcore BuildInfo.h)
 target_include_directories(mvcore PUBLIC ..)
 
 # Needed to prevent including system-level boost headers:
-target_include_directories(mvcore SYSTEM PUBLIC)
+#target_include_directories(mvcore SYSTEM PUBLIC)
 
-target_link_libraries(mvcore spdlog)
+target_link_libraries(mvcore PUBLIC spdlog::spdlog)

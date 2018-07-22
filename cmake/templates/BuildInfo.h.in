@@ -1,5 +1,5 @@
 #pragma once
 
-#define BUILD_PLATFORM  @BUILD_PLATFORM@
-#define BUILD_TYPE      @BUILD_TYPE@
+#define BUILD_PLATFORM  "@BUILD_PLATFORM@"
+#define BUILD_TYPE      "@BUILD_TYPE@"
 #define PROJECT_VERSION "@PROJECT_VERSION@"

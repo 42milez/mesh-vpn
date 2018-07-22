@@ -1,14 +1,24 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-int add(int x, int y) {
-  return x + y;
+class Turtle {
+public:
+  virtual int GetX() const = 0;
+  virtual ~Turtle() {}
+};
+
+class MockTurtle: public Turtle {
+public:
+  MOCK_CONST_METHOD0(GetX, int());
+};
+
+TEST(Foo, Boo) {
+  ASSERT_EQ(3, 3);
 }
 
-TEST(AddTest, Test1) {
-  ASSERT_EQ(2, add(1, 1));
-}
+TEST(Foo, Mock) {
+  MockTurtle turtle;
+  EXPECT_CALL(turtle, GetX()).Times(::testing::AtLeast(1));
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+  turtle.GetX();
 }

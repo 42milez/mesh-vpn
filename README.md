@@ -1,4 +1,4 @@
-# mesh-vpn
+# cpp-meshbird
 A decentralized VPN, inspired by [meshbird](https://github.com/meshbird/meshbird).
 
 # Build
